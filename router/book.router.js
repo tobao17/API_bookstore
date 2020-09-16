@@ -1,0 +1,11 @@
+const express = require("express");
+const router = express.Router();
+var multer = require("multer");
+var upload = multer({ dest: "uploads/" });
+const bookController = require("../controller/book.controller");
+router.get("/", bookController.index);
+router.post("/create", upload.single("books"), bookController.postCreate);
+router.get("/delete/:id", bookController.delete);
+router.post("/update", upload.single("books"), bookController.postUpdate);
+router.post("/search", bookController.searchBooks);
+module.exports = router;
