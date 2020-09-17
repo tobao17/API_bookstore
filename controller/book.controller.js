@@ -1,4 +1,3 @@
-const { title } = require("process");
 const Book = require("../models/book.model");
 //const transactions = require("../../model/transactions.model");
 
@@ -14,16 +13,20 @@ module.exports.index = async (req, res) => {
     var books = await Book.find();
     return res.status(201).json(books);
   } catch (error) {
-    return res.status(401).json("loi roi");
+    return res.status(404).json(`fail ${error}`);
   }
+};
+
+module.exports.getBook = async (req, res) => {
+  res.json(res.paginateResult);
 };
 
 module.exports.delete = async (req, res) => {
   try {
     await Book.deleteOne({ _id: req.params.id });
-    return res.status(204).json("xoa thanh cong!");
+    return res.status(204).json("delete success!");
   } catch (error) {
-    res.status(403).json("xoa that bai");
+    res.status(404).json("delete fail!");
   }
 };
 module.exports.postCreate = async (req, res) => {
@@ -36,7 +39,7 @@ module.exports.postCreate = async (req, res) => {
         }
         if (err) {
           console.log("loi o day");
-          return res.status(403).json("them anh fail ");
+          return res.status(403).json("create image fail ");
         }
       });
     }
@@ -44,7 +47,7 @@ module.exports.postCreate = async (req, res) => {
     await Book.create(req.body);
     return res.status(201).json("create success! ");
   } catch (error) {
-    return res.status(401).json(`create fail ${error} !`);
+    return res.status(404).json(`create fail ${error} !`);
   }
 };
 
@@ -55,8 +58,7 @@ module.exports.postUpdate = async (req, res) => {
         req.body.images = result.url;
       }
       if (err) {
-        console.log("loi o day");
-        return res.status(403).json("them anh fail ");
+        return res.status(404).json(`create fail ${error} !`);
       }
     });
   }
@@ -85,9 +87,9 @@ module.exports.postUpdate = async (req, res) => {
         },
       }
     );
-    return res.status(200).json("update success!");
+    return res.status(200).json(`update success!`);
   } catch (error) {
-    return res.status(401).json("update fail!");
+    return res.status(404).json(`update fail!`);
   }
 };
 module.exports.searchBooks = async (req, res) => {
@@ -96,9 +98,9 @@ module.exports.searchBooks = async (req, res) => {
     const bookSearch = await Book.find({
       title: { $regex: req.body.keyword, $options: "$i" },
     });
-    res.status(200).json(bookSearch);
+    return res.status(200).json(bookSearch);
     //
   } catch (error) {
-    res.status(401).json(`search fail ${error}`);
+    return res.status(404).json(`search fail ${error}`);
   }
 };
