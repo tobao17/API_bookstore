@@ -1,9 +1,22 @@
 const express = require("express");
 const router = express.Router();
-var multer = require("multer");
-var upload = multer({ dest: "uploads/" });
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 const bookController = require("../controller/book.controller");
+
+//
+//
+//
+const book = require("../models/book.model");
+const middleWare = require("../middleware/paginate.middleware");
+//
+//
+//
+//
+//
+
 router.get("/", bookController.index);
+router.get("/getbook", middleWare.paginateResult(book), bookController.getBook);
 router.post("/create", upload.single("books"), bookController.postCreate);
 router.get("/delete/:id", bookController.delete);
 router.post("/update", upload.single("books"), bookController.postUpdate);
