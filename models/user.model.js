@@ -7,7 +7,7 @@ var userSchema = new mongoose.Schema({
   address: String,
   role: Number,
   avatar: String,
-  name: String,
+  wrongLoginCount: Number,
   status: { type: Number, default: 1 },
   wallet: { type: Number, default: 0 },
 });
