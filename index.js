@@ -19,6 +19,7 @@ mongoose.set("useFindAndModify", false);
 //
 const bookRouter = require("./router/book.router");
 const categoriesRouter = require("./router/categories.router");
+const userRouter = require("./router/user.router");
 
 //
 //
@@ -29,8 +30,12 @@ const categoriesRouter = require("./router/categories.router");
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+//
+//
 app.use("/books", bookRouter);
 app.use("/categori", categoriesRouter);
+app.use("/user", userRouter);
 var port = process.env.PORT || 3000;
 // listen for requests :)
 app.listen(port, () => {
