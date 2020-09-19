@@ -8,15 +8,20 @@ const bookController = require("../controller/book.controller");
 //
 //
 const book = require("../models/book.model");
-const middleWare = require("../middleware/paginate.middleware");
+const midPaginate = require("../middleware/paginate.middleware");
+const midToken = require("../middleware/verifiedToken.middleware");
 //
 //
 //
 //
 //
 
-router.get("/", bookController.index);
-router.get("/getbook", middleWare.paginateResult(book), bookController.getBook);
+router.get("/", midToken.verified, bookController.index);
+router.get(
+  "/getbook",
+  midPaginate.paginateResult(book),
+  bookController.getBook
+);
 router.post("/create", upload.single("books"), bookController.postCreate);
 router.get("/delete/:id", bookController.delete);
 router.post("/update", upload.single("books"), bookController.postUpdate);
