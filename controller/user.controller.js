@@ -31,8 +31,8 @@ module.exports.create = async (req, res) => {
 };
 
 module.exports.postLogin = async (req, res) => {
-  const { email, password } = req.body;
-  const UserExits = await User.findOne({ email });
+  const { username, password } = req.body;
+  const UserExits = await User.findOne({ username });
   if (!UserExits) {
     return res.status(202).json({ msg: `Tài khoản không tồn tại !` });
   }
@@ -43,7 +43,7 @@ module.exports.postLogin = async (req, res) => {
   }
   if (!bcryptjs.compareSync(password, UserExits.password)) {
     await User.updateOne(
-      { email },
+      { username },
       {
         $inc: {
           wrongLoginCount: 1,
