@@ -8,10 +8,10 @@ module.exports.index = async (req, res) => {
   }
 };
 module.exports.create = async (req, res) => {
-  const nameCategories = req.body.nameCategories.trim();
+  const name = req.body.name.trim();
   try {
-    if (nameCategories !== " ") {
-      await Categories.create({ name: nameCategories });
+    if (name !== " ") {
+      await Categories.create({ name: name });
       return res.status(201).json(`create categories success!`);
     }
   } catch (error) {
