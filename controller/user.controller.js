@@ -52,9 +52,9 @@ module.exports.postLogin = async (req, res) => {
     );
     return res.status(202).json({ msg: `Sai mật khẩu!` });
   }
-  if (UserExits.role !== 0) {
-    return res.status(202).json({ msg: `Lỗi truy cập! bạn đang ở quyền user` });
-  }
+  // if (UserExits.role !== 0) {
+  //   return res.status(202).json({ msg: `Lỗi truy cập! bạn đang ở quyền user` });
+  // }
   if (bcryptjs.compareSync(password, UserExits.password)) {
     const payload = {
       user: {
