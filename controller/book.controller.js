@@ -24,9 +24,9 @@ module.exports.getBook = async (req, res) => {
 module.exports.delete = async (req, res) => {
   try {
     await Book.deleteOne({ _id: req.params.id });
-    return res.status(204).json("delete success!");
+    return res.status(201).json("delete success!");
   } catch (error) {
-    res.status(404).json("delete fail!");
+    res.status(400).json("delete fail!");
   }
 };
 module.exports.postCreate = async (req, res) => {
