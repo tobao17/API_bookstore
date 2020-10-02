@@ -9,21 +9,28 @@ const bookController = require("../controller/book.controller");
 //
 const book = require("../models/book.model");
 const midPaginate = require("../middleware/paginate.middleware");
-const midToken = require("../middleware/verifiedToken.middleware");
+const Token = require("../middleware/verifiedToken.middleware");
+const role = require("../middleware/role.validate");
 //
 //
 //
 //
 //
 
-router.get("/", midToken.verified, bookController.index);
+router.get("/", bookController.index);
 router.get(
   "/getbook",
   midPaginate.paginateResult(book),
   bookController.getBook
 );
-router.post("/create", upload.single("books"), bookController.postCreate);
+router.post(
+  "/create",
+  Token.verified,
+  role.checkRole(role.ROLES.Seller),
+  upload.single("images"),
+  bookController.postCreate
+);
 router.get("/delete/:id", bookController.delete);
-router.post("/update", upload.single("books"), bookController.postUpdate);
+router.post("/update", upload.single("images"), bookController.postUpdate);
 router.post("/search", bookController.searchBooks);
 module.exports = router;
