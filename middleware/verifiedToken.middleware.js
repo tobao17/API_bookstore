@@ -5,7 +5,8 @@ module.exports.verified = (req, res, next) => {
   if (token) {
     jwt.verify(token, process.env.jwtkey, (err, decoded) => {
       if (err) return res.status(403).json(`${err}`);
-      console.log(decoded);
+      req.token = decoded;
+      //  console.log(decoded);
       next();
     });
   } else {
