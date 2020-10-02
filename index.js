@@ -20,6 +20,7 @@ mongoose.set("useFindAndModify", false);
 const bookRouter = require("./router/book.router");
 const categoriesRouter = require("./router/categories.router");
 const userRouter = require("./router/user.router");
+const cartRouter = require("./router/cart.router");
 
 //
 //
@@ -36,6 +37,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/books", bookRouter);
 app.use("/categori", categoriesRouter);
 app.use("/user", userRouter);
+app.use("/cart", cartRouter);
 var port = process.env.PORT || 3000;
 // listen for requests :)
 app.listen(port, () => {
