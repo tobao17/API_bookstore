@@ -28,6 +28,12 @@ const CartSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  isComplete: {
+    type: Boolean,
+    default: false,
+  },
+  //true if added order
+  //
 });
 
 module.exports = Mongoose.model("Cart", CartSchema);

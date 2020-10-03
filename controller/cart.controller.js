@@ -5,6 +5,7 @@ module.exports.index = async (req, res) => {
   try {
     const cart = await Cart.findOne({
       user: userId,
+      isComplete: false,
     }).populate("products.product", "-description");
     res.status(200).json(cart);
   } catch (error) {
@@ -16,16 +17,22 @@ module.exports.add = async (req, res) => {
   req.body.user = req.token.user.id;
 
   try {
-    const cartByUser = await Cart.findOne({ user: req.body.user });
+    const cartByUser = await Cart.findOne({
+      user: req.body.user,
+      isComplete: false,
+    });
+    console.log(cartByUser);
     if (cartByUser) {
       const isItemAdd = cartByUser.products.find(
         (item) => item.product == req.body.products.product
       );
-
+      //console.log(req.body.products.product);
+      // console.log(isItemAdd);
       if (isItemAdd) {
         const test = await Cart.findOneAndUpdate(
           {
             user: req.body.user,
+            isComplete: false,
             "products.product": req.body.products.product,
           },
           {
@@ -37,25 +44,29 @@ module.exports.add = async (req, res) => {
             },
           }
         );
-        const cart = await Cart.findOne({ user: req.body.user });
+        const cart = await Cart.findOne({
+          user: req.body.user,
+          isComplete: false,
+        });
         return res.status(200).json({ cart });
       }
-
       await Cart.findOneAndUpdate(
-        { user: req.body.user },
+        { user: req.body.user, isComplete: false },
         {
           $push: {
             products: products,
           },
         }
       );
-      const cart = await Cart.findOne({ user: req.body.user });
+      const cart = await Cart.findOne({
+        user: req.body.user,
+        isComplete: false,
+      });
 
       return res.status(200).json({ cart });
     } else {
       const cartCreate = await Cart.create(req.body);
       return res.status(200).json({
-        success: true,
         cartCreate,
       });
     }
@@ -78,7 +89,7 @@ module.exports.deleteBook = async (req, res) => {
   try {
     const { cartId, productId } = req.params;
     await Cart.findOneAndUpdate(
-      { _id: cartId },
+      { _id: cartId, isComplete: false },
       {
         $pull: {
           product: productId,

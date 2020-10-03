@@ -1,14 +1,23 @@
 const mongoose = require("mongoose");
-const mongoosePaginate = require("mongoose-paginate");
 
 var orderSchema = new mongoose.Schema({
-  customer: { type: mongoose.Types.ObjectId, ref: "User" },
-  cart: { totalPrice: Number, productList: Array },
-  status: Number,
+  customer: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  cart: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Cart",
+  },
+  address: String,
+  totalrice: Number,
+  created: {
+    type: Date,
+    default: Date.now,
+  },
+  status: {
+    type: Number,
+    default: 0,
+  },
   // 0: seller chưa xác nhận,
-  // 1: seller xác nhận,
-  // 2: hoàn thành đơn hàng thành công,
-  // 3: hủy đơn hàng
+  // 1: hoàn thành đơn hàng thành công,
 });
-var Order = mongoose.model("Order", orderSchema, "orders");
+const Order = mongoose.model("Order", orderSchema);
 module.exports = Order;

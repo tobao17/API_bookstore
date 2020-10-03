@@ -7,7 +7,7 @@ var bookSchema = new mongoose.Schema({
   status: Number,
   quantity: Number,
 
-  seller: { type: mongoose.Schema.Types.ObjectId }, //, ref: "User"
+  //seller: { type: mongoose.Schema.Types.ObjectId }, //, ref: "User"
   category: mongoose.Schema.Types.ObjectId,
   images: String,
 });

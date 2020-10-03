@@ -10,17 +10,4 @@ router.get("/delete/:id", auth.verified, cartController.deleteCart);
 
 router.get("/delete/:cartId/:productId", cartController.deleteBook);
 
-const decreaseQuantity = (products) => {
-  let bulkOptions = products.map((item) => {
-    return {
-      updateOne: {
-        filter: { _id: item.product },
-        update: { $inc: { quantity: -item.quantity } },
-      },
-    };
-  });
-  console.log(bulkOptions[0].updateOne);
-  Product.bulkWrite(bulkOptions);
-};
-
 module.exports = router;
