@@ -34,6 +34,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 //
 //
+app.get("/", (res, res) => {
+  res.json("hello...wellcome!!");
+});
 app.use("/books", bookRouter);
 app.use("/categori", categoriesRouter);
 app.use("/user", userRouter);
