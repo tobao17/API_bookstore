@@ -18,17 +18,19 @@ const role = require("../middleware/role.validate");
 //
 
 router.get("/", bookController.index);
+
+router.get("/:id", bookController.detail);
 router.get(
-  "/getbook",
-  midPaginate.paginateResult(book),
-  bookController.getBook
+	"/getbook",
+	midPaginate.paginateResult(book),
+	bookController.getBook
 );
 router.post(
-  "/create",
-  Token.verified,
-  role.checkRole(role.ROLES.Seller),
-  upload.single("images"),
-  bookController.postCreate
+	"/create",
+	Token.verified,
+	role.checkRole(role.ROLES.Seller),
+	upload.single("images"),
+	bookController.postCreate
 );
 router.get("/delete/:id", bookController.delete);
 router.post("/update", upload.single("images"), bookController.postUpdate);
