@@ -37,7 +37,7 @@ module.exports.detail = async (req, res) => {
 		);
 		return res.status(200).json(book);
 	} catch (error) {
-		res.status(400).json("fail!");
+		res.status(400).json("fail cc!");
 	}
 };
 module.exports.postCreate = async (req, res) => {

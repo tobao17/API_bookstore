@@ -19,10 +19,10 @@ const role = require("../middleware/role.validate");
 
 router.get("/", bookController.index);
 
-router.get("/:id", bookController.detail);
+router.get("/getbook/:id", bookController.detail);
 router.get(
 	"/getbook",
-	midPaginate.paginateResult(book),
+	midPaginate.paginateResult(book, "category"),
 	bookController.getBook
 );
 router.post(
