@@ -10,7 +10,7 @@ cloudinary.config({
 });
 module.exports.index = async (req, res) => {
 	try {
-		var books = await Book.find();
+		var books = await Book.find().populate("category", "-_id");
 		return res.status(201).json(books);
 	} catch (error) {
 		return res.status(404).json(`fail ${error}`);
