@@ -41,7 +41,6 @@ module.exports.detail = async (req, res) => {
 	}
 };
 module.exports.postCreate = async (req, res) => {
-	console.log(req.body);
 	try {
 		if (req.file) {
 			await cloudinary.uploader.upload(req.file.path, (err, result) => {
@@ -49,14 +48,13 @@ module.exports.postCreate = async (req, res) => {
 					req.body.images = result.url;
 				}
 				if (err) {
-					console.log("loi o day");
 					return res.status(403).json("create image fail ");
 				}
 			});
 		}
 
-		await Book.create(req.body);
-		return res.status(201).json("create success! ");
+		const books = await Book.create(req.body);
+		return res.status(201).json({ msd: "create success!", data: books });
 	} catch (error) {
 		return res.status(404).json(`create fail ${error} !`);
 	}
