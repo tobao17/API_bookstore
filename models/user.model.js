@@ -7,9 +7,16 @@ var userSchema = new mongoose.Schema({
 	address: String,
 	role: { type: Number, default: 0 },
 	avatar: String,
+
 	wrongLoginCount: { type: Number, default: 0 },
 	status: { type: Number, default: 1 },
 	wallet: { type: Number, default: 0 },
+	cart: [
+		{
+			book: { type: mongoose.Types.ObjectId, ref: "books" },
+			amount: Number,
+		},
+	],
 });
 var User = mongoose.model("User", userSchema);
 module.exports = User;
