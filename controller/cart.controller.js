@@ -26,6 +26,8 @@ module.exports.add = async (req, res) => {
 			const isItemAdd = cartByUser.products.find(
 				(item) => item.product == req.body.products.product
 			);
+			//console.log(req.body.products.product);
+			// console.log(isItemAdd);
 			if (isItemAdd) {
 				const test = await Cart.findOneAndUpdate(
 					{

@@ -6,4 +6,5 @@ router.get("/", userController.index);
 router.post("/create", userController.create);
 router.post("/login", userController.postLogin);
 // router.get("/delete/:id", CategoriController.delete);
+router.post("/add", userController.addtoCart2);
 module.exports = router;
