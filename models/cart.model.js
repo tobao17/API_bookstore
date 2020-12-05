@@ -19,11 +19,7 @@ const CartSchema = new Schema({
 		type: Schema.Types.ObjectId,
 		ref: "User",
 	},
-	updated: { type: Date },
-	created: {
-		type: Date,
-		default: Date.now,
-	},
+
 	isComplete: {
 		type: Boolean,
 		default: false,

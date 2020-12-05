@@ -109,7 +109,7 @@ module.exports.addtoCart = async (req, res) => {
 			});
 			return res.status(200).json({ cart });
 		}
-		console.log("?");
+
 		await User.findOneAndUpdate(
 			{ _id: userId },
 			{
@@ -139,6 +139,7 @@ module.exports.addtoCart2 = async (req, res) => {
 
 	try {
 		await Promise.all(
+			// use promise.all in order to use async await in map
 			productToCart.map(async (item) => {
 				//	console.log(item);
 				const isItemAdd = userCart.cart.find(
@@ -193,7 +194,7 @@ module.exports.deleteCart = async (req, res) => {
 	}
 };
 module.exports.deleteBook = async (req, res) => {
-	const userId = req.token.user.id;
+	const userId = req.token.user.id; //get user
 	const { bookId } = req.params;
 	const user = await User.findById(userId);
 	console.log(user);
@@ -202,7 +203,7 @@ module.exports.deleteBook = async (req, res) => {
 			{ _id: userId },
 			{
 				$pull: {
-					cart: { book: bookId },
+					cart: { book: bookId }, //delete product in cart
 				},
 			}
 		);

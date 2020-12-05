@@ -10,7 +10,10 @@ cloudinary.config({
 });
 module.exports.index = async (req, res) => {
 	try {
-		var books = await Book.find().populate("category", "-_id");
+		var books = await Book.find({ isDelete: false }).populate(
+			"category",
+			"-_id"
+		);
 		return res.status(201).json(books);
 	} catch (error) {
 		return res.status(404).json(`fail ${error}`);
@@ -23,7 +26,7 @@ module.exports.getBook = async (req, res) => {
 
 module.exports.delete = async (req, res) => {
 	try {
-		await Book.deleteOne({ _id: req.params.id });
+		await Book.updateOne({ _id: req.params.id }, { isDelete: true });
 		return res.status(201).json("delete success!");
 	} catch (error) {
 		res.status(400).json("delete fail!");
@@ -31,10 +34,10 @@ module.exports.delete = async (req, res) => {
 };
 module.exports.detail = async (req, res) => {
 	try {
-		const book = await Book.findOne({ _id: req.params.id }).populate(
-			"category",
-			"-_id"
-		);
+		const book = await Book.findOne({
+			_id: req.params.id,
+			isDelete: false,
+		}).populate("category", "-_id");
 		return res.status(200).json(book);
 	} catch (error) {
 		res.status(400).json("fail cc!");
@@ -105,6 +108,7 @@ module.exports.searchBooks = async (req, res) => {
 	console.log(req.body.keyword);
 	try {
 		const bookSearch = await Book.find({
+			isDelete: false,
 			title: { $regex: req.body.keyword, $options: "$i" },
 		});
 		return res.status(200).json(bookSearch);

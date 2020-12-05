@@ -21,7 +21,7 @@ module.exports.paginateResult = function paginateResult(model, refString) {
 		}
 		try {
 			resut.result = await model
-				.find()
+				.find({ isDelete: false })
 				.populate(refString)
 				.limit(limit)
 				.skip(startIndex);

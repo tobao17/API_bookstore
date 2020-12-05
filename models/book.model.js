@@ -7,7 +7,11 @@ var bookSchema = new mongoose.Schema(
 		price: Number,
 		status: Number,
 		quantity: Number,
-
+		isDelete: {
+			// view product
+			type: Boolean,
+			default: false,
+		},
 		//seller: { type: mongoose.Schema.Types.ObjectId }, //, ref: "User"
 		category: {
 			type: mongoose.Schema.Types.ObjectId,
