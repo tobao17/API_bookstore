@@ -72,24 +72,16 @@ module.exports.postLogin = async (req, res) => {
 			.json({ user: UserExits, accessToken: accessToken });
 	}
 };
-module.exports.addtoCart2 = async (req, res) => {
-	res.json("fafadfasdfasdf");
-};
-module.exports.addtoCart1 = async (req, res) => {
+
+module.exports.addtoCart = async (req, res) => {
 	const productToCart = req.body;
 	// 	console.log(productToCart);
 	const userId = req.token.user.id;
-	const temp = await User.findOne({
-		_id: userId,
-		"cart.book": "5f789ecb7c17be338c676efd",
-	});
 
 	try {
 		const userCart = await User.findOne({
 			_id: userId,
 		});
-		//console.log(userCart);
-
 		const isItemAdd = userCart.cart.find(
 			(item) => item.book == productToCart.book
 		);
@@ -134,5 +126,89 @@ module.exports.addtoCart1 = async (req, res) => {
 		return res.status(400).json({
 			msd: `your request could not be processed! +${error}`,
 		});
+	}
+};
+
+module.exports.addtoCart2 = async (req, res) => {
+	const productToCart = req.body.product;
+
+	const userId = req.token.user.id;
+	const userCart = await User.findOne({
+		_id: userId,
+	});
+
+	try {
+		await Promise.all(
+			productToCart.map(async (item) => {
+				//	console.log(item);
+				const isItemAdd = userCart.cart.find(
+					(bookInCart) => bookInCart.book == item.book
+				);
+				if (isItemAdd) {
+					await User.updateOne(
+						{
+							_id: userId,
+							"cart.book": item.book,
+						},
+						{
+							$set: {
+								"cart.$": {
+									...item,
+									amount: isItemAdd.amount + item.amount,
+								},
+							},
+						}
+					);
+				} else {
+					await User.findOneAndUpdate(
+						{ _id: userId },
+						{
+							$push: {
+								cart: item,
+							},
+						}
+					);
+				}
+			})
+		);
+
+		const cart = await User.findOne({
+			_id: userId,
+		});
+		return res.status(200).json({ cart });
+	} catch (error) {
+		return res.status(400).json({
+			msd: `your request could not be processed! +${error}`,
+		});
+	}
+};
+module.exports.deleteCart = async (req, res) => {
+	try {
+		const userId = req.token.user.id;
+
+		await User.findOneAndUpdate({ _id: userId }, { cart: [] });
+		return res.status(200).json({ msg: `delete success!` });
+	} catch (error) {
+		return res.status(400).json({ msg: `delete fail!`, error: `${error}` });
+	}
+};
+module.exports.deleteBook = async (req, res) => {
+	const userId = req.token.user.id;
+	const { bookId } = req.params;
+	const user = await User.findById(userId);
+	console.log(user);
+	try {
+		await User.updateOne(
+			{ _id: userId },
+			{
+				$pull: {
+					cart: { book: bookId },
+				},
+			}
+		);
+
+		return res.status(200).json("delete sussess!");
+	} catch (error) {
+		return res.status(400).json(`delete fail! ${error}`);
 	}
 };
