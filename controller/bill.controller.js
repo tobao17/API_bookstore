@@ -1,6 +1,18 @@
-const Cart = require("../models/order.model");
-const Order = require("../models/bill.model");
+const Order = require("../models/order.model");
 const Product = require("../models/book.model");
+
+module.exports.completeOrder = async (req, res) => {
+	const OrderId = req.params.id;
+
+	try {
+		await Order.updateOne({ _id: OrderId }, { status: 1 });
+
+		return res.status(200).json({ msg: ` success!` });
+	} catch (error) {
+		return res.status(400).json({ msg: ` fail!`, error: `${error}` });
+	}
+};
+
 module.exports.add = async (req, res) => {
 	try {
 		const cart = await Cart.findOne({ _id: req.body.cart });

@@ -48,14 +48,3 @@ module.exports.deleteOrder = async (req, res) => {
 		return res.status(400).json({ msg: `delete fail!`, error: `${error}` });
 	}
 };
-module.exports.completeOrder = async (req, res) => {
-	const OrderId = req.params.id;
-
-	try {
-		await Order.updateOne({ _id: OrderId }, { status: 1 });
-
-		return res.status(200).json({ msg: ` success!` });
-	} catch (error) {
-		return res.status(400).json({ msg: ` fail!`, error: `${error}` });
-	}
-};
