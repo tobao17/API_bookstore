@@ -23,6 +23,7 @@ const categoriesRouter = require("./router/categories.router");
 const userRouter = require("./router/user.router");
 const cartRouter = require("./router/cart.router");
 const orderRouter = require("./router/order.router");
+const billRouter = require("./router/bill.router");
 //
 //
 //
@@ -39,7 +40,8 @@ app.use("/categori", categoriesRouter);
 app.use("/user", userRouter);
 app.use("/cart", cartRouter);
 app.use("/order", orderRouter);
-app.use("/bill", orderRouter);
+app.use("/bill", billRouter);
+
 var port = process.env.PORT || 3000;
 // listen for requests :)
 app.listen(port, () => {

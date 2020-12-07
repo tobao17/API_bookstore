@@ -1,59 +1,36 @@
 const Order = require("../models/order.model");
 const Product = require("../models/book.model");
+const Bill = require("../models/bill.model");
+const bill = require("../models/bill.model");
 
-module.exports.completeOrder = async (req, res) => {
+module.exports.add = async (req, res) => {
 	const OrderId = req.params.id;
 
 	try {
-		await Order.updateOne({ _id: OrderId }, { status: 1 });
+		await Order.findOneAndUpdate({ _id: OrderId }, { status: 1 });
+		const orderComplete = await Order.findById(OrderId);
 
-		return res.status(200).json({ msg: ` success!` });
+		await Bill.create({ Order: OrderId });
+		//	console.log(orderComplete);
+		const { products } = orderComplete;
+		console.log(products);
+		decreaseQuantity(products);
+		return res.status(200).json({ msg: ` success!`, orderComplete });
 	} catch (error) {
 		return res.status(400).json({ msg: ` fail!`, error: `${error}` });
 	}
 };
 
-module.exports.add = async (req, res) => {
-	try {
-		const cart = await Cart.findOne({ _id: req.body.cart });
-		if (!cart) {
-			return res.status(400).json({ msd: "add order fail!" });
-		}
-		if (cart.isComplete) {
-			return res.status(400).json({ msd: "add order fail!" });
-		}
+//chu xu ly xong  bill xoa ???
 
-		const { products } = cart;
-
-		await Order.create(req.body);
-		await Cart.findOneAndUpdate(
-			{ _id: req.body.cart },
-			{
-				$set: {
-					isComplete: true,
-				},
-			}
-		);
-
-		await decreaseQuantity(products);
-		return res.status(200).json({ msd: "add order success!" });
-	} catch (error) {
-		return res.status(400).json(error);
-	}
-};
 module.exports.deleteOrder = async (req, res) => {
-	try {
-		console.log(req.params.id);
-		const OrderDeltete = await Order.findOne({ _id: req.params.id }).populate(
-			"cart"
-		);
-		OrderDeltete.deleteOne();
-		OrderDeltete.save();
-		const { cart } = OrderDeltete;
-		const { _id, products } = cart;
-		await Cart.deleteOne({ _id });
+	const OrderId = req.params.id;
 
-		subQuantity(products);
+	try {
+		const OrderDeltete = await Order.findOne({ _id: OrderId });
+		const { products } = OrderDeltete;
+		await Bill.deleteOne({ Order: OrderId });
+		IncQuantity(products);
 		return res.status(200).json("delete success!");
 	} catch (error) {
 		return res.status(400).json(`delete fail! +${error}`);
@@ -64,7 +41,7 @@ const decreaseQuantity = (products) => {
 	let bulkOptions = products.map((item) => {
 		return {
 			updateOne: {
-				filter: { _id: item.product },
+				filter: { _id: item.book },
 				update: { $inc: { quantity: -item.quantity } },
 			},
 		};
@@ -72,7 +49,7 @@ const decreaseQuantity = (products) => {
 
 	Product.bulkWrite(bulkOptions);
 };
-const subQuantity = (products) => {
+const IncQuantity = (products) => {
 	let bulkOptions = products.map((item) => {
 		return {
 			updateOne: {

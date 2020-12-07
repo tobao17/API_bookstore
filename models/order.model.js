@@ -13,7 +13,7 @@ const OrderItemSchema = new Schema({
 });
 
 // Cart Schema
-const CartSchema = new Schema(
+const OrderSchema = new Schema(
 	{
 		products: [OrderItemSchema],
 		user: {
@@ -31,4 +31,4 @@ const CartSchema = new Schema(
 	{ timestamps: true }
 );
 
-module.exports = Mongoose.model("Order", CartSchema);
+module.exports = Mongoose.model("Order", OrderSchema);
