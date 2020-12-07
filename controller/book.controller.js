@@ -8,13 +8,20 @@ cloudinary.config({
 	api_key: process.env.api_key,
 	api_secret: process.env.api_secret,
 });
+
 module.exports.index = async (req, res) => {
 	try {
+		var newBook = await Book.find().sort({ createdAt: -1 }).limit(4);
+		// const bookinorder =
 		var books = await Book.find({ isDelete: false }).populate(
 			"category",
 			"-_id"
 		);
-		return res.status(201).json(books);
+
+		return res.status(201).json({
+			newBook,
+			books,
+		});
 	} catch (error) {
 		return res.status(404).json(`fail ${error}`);
 	}
