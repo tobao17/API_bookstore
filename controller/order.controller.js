@@ -29,7 +29,7 @@ module.exports.add = async (req, res) => {
 	try {
 		console.log(req.body);
 		const order = await Order.create(req.body);
-
+		await User.findOneAndUpdate({ _id: req.body.user }, { cart: [] });
 		return res.status(201).json({ msd: "add order success!", order: order });
 	} catch (error) {
 		return res.status(400).json({
@@ -40,7 +40,6 @@ module.exports.add = async (req, res) => {
 
 module.exports.deleteOrder = async (req, res) => {
 	const OrderId = req.params.id;
-
 	try {
 		await Order.updateOne({ _id: OrderId }, { status: 2 });
 		return res.status(200).json({ msg: `delete success!` });
