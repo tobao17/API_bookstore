@@ -1,23 +1,34 @@
-const mongoose = require("mongoose");
+const Mongoose = require("mongoose");
+const { Schema } = Mongoose;
 
-var orderSchema = new mongoose.Schema({
-  customer: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  cart: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Cart",
-  },
-  address: String,
-  totalrice: Number,
-  created: {
-    type: Date,
-    default: Date.now,
-  },
-  status: {
-    type: Number,
-    default: 0,
-  },
-  // 0: seller chưa xác nhận,
-  // 1: hoàn thành đơn hàng thành công,
+const OrderItemSchema = new Schema({
+	book: {
+		type: Schema.Types.ObjectId,
+		ref: "books",
+	},
+	quantity: Number,
+	totalPrice: {
+		type: Number,
+	},
 });
-const Order = mongoose.model("Order", orderSchema);
-module.exports = Order;
+
+// Cart Schema
+const CartSchema = new Schema(
+	{
+		products: [OrderItemSchema],
+		user: {
+			type: Schema.Types.ObjectId,
+			ref: "User",
+		},
+		address: String,
+		note: String,
+		status: {
+			type: Number,
+			default: false, //0 chua xu ly ,1 xac nhan don hang , 2 huy don hang
+		},
+		totalrice: Number,
+	},
+	{ timestamps: true }
+);
+
+module.exports = Mongoose.model("Order", CartSchema);

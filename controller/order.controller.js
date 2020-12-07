@@ -1,73 +1,61 @@
-const Cart = require("../models/cart.model");
 const Order = require("../models/order.model");
 const Product = require("../models/book.model");
+
+module.exports.index = async (req, res) => {
+	try {
+		const orderlist = await Order.find({})
+			.populate("products.book", "-description -isDelete -quantity")
+			.sort({ status: 1 });
+		res.status(200).json(orderlist);
+	} catch (error) {
+		res.status(400).json(error);
+	}
+};
+module.exports.checkorder = async (req, res) => {
+	const userId = req.token.user.id;
+	try {
+		const myOrder = await Order.find({ user: userId, status: !2 });
+		return res.status(200).json({ msg: ` success!`, order: myOrder });
+	} catch (error) {
+		return res
+			.status(400)
+			.json({ msg: `get my order fail!`, error: `${error}` });
+	}
+};
+
 module.exports.add = async (req, res) => {
-  try {
-    const cart = await Cart.findOne({ _id: req.body.cart });
-    if (!cart) {
-      return res.status(400).json({ msd: "add order fail!" });
-    }
-    if (cart.isComplete) {
-      return res.status(400).json({ msd: "add order fail!" });
-    }
+	req.body.user = req.token.user.id;
 
-    const { products } = cart;
+	try {
+		console.log(req.body);
+		const order = await Order.create(req.body);
 
-    await Order.create(req.body);
-    await Cart.findOneAndUpdate(
-      { _id: req.body.cart },
-      {
-        $set: {
-          isComplete: true,
-        },
-      }
-    );
-
-    await decreaseQuantity(products);
-    return res.status(200).json({ msd: "add order success!" });
-  } catch (error) {
-    return res.status(400).json(error);
-  }
+		return res.status(201).json({ msd: "add order success!", order: order });
+	} catch (error) {
+		return res.status(400).json({
+			msd: `your request could not be processed! +${error}`,
+		});
+	}
 };
+
 module.exports.deleteOrder = async (req, res) => {
-  try {
-    console.log(req.params.id);
-    const OrderDeltete = await Order.findOne({ _id: req.params.id }).populate(
-      "cart"
-    );
-    OrderDeltete.deleteOne();
-    OrderDeltete.save();
-    const { cart } = OrderDeltete;
-    const { _id, products } = cart;
-    await Cart.deleteOne({ _id });
+	const OrderId = req.params.id;
 
-    subQuantity(products);
-    return res.status(200).json("delete success!");
-  } catch (error) {
-    return res.status(400).json(`delete fail! +${error}`);
-  }
+	try {
+		await Order.updateOne({ _id: OrderId }, { status: 2 });
+		return res.status(200).json({ msg: `delete success!` });
+	} catch (error) {
+		return res.status(400).json({ msg: `delete fail!`, error: `${error}` });
+	}
 };
+module.exports.completeOrder = async (req, res) => {
+	const OrderId = req.params.id;
 
-const decreaseQuantity = (products) => {
-  let bulkOptions = products.map((item) => {
-    return {
-      updateOne: {
-        filter: { _id: item.product },
-        update: { $inc: { quantity: -item.quantity } },
-      },
-    };
-  });
+	try {
+		await Order.updateOne({ _id: OrderId }, { status: 1 });
 
-  Product.bulkWrite(bulkOptions);
-};
-const subQuantity = (products) => {
-  let bulkOptions = products.map((item) => {
-    return {
-      updateOne: {
-        filter: { _id: item.product },
-        update: { $inc: { quantity: +item.quantity } },
-      },
-    };
-  });
-  Product.bulkWrite(bulkOptions);
+		return res.status(200).json({ msg: ` success!` });
+	} catch (error) {
+		return res.status(400).json({ msg: ` fail!`, error: `${error}` });
+	}
 };

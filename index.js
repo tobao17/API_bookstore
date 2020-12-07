@@ -39,6 +39,7 @@ app.use("/categori", categoriesRouter);
 app.use("/user", userRouter);
 app.use("/cart", cartRouter);
 app.use("/order", orderRouter);
+app.use("/bill", orderRouter);
 var port = process.env.PORT || 3000;
 // listen for requests :)
 app.listen(port, () => {
