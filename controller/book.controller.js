@@ -46,7 +46,7 @@ module.exports.index = async (req, res) => {
 		return res.status(201).json({
 			hotBook,
 			newBook,
-			books
+			books,
 		});
 	} catch (error) {
 		return res.status(404).json(`fail ${error}`);
@@ -59,10 +59,6 @@ module.exports.getBook = async (req, res) => {
 
 module.exports.delete = async (req, res) => {
 	try {
-<<<<<<< HEAD
-=======
-		console.log("asdfad");
->>>>>>> recover-branch
 		await Book.updateOne({ _id: req.params.id }, { isDeleted: true });
 		return res.status(201).json("delete success!");
 	} catch (error) {
