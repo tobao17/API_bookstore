@@ -1,5 +1,5 @@
 const Book = require("../models/book.model");
-//const transactions = require("../../model/transactions.model");
+const Order = require("../models/order.model");
 
 require("dotenv").config();
 var cloudinary = require("cloudinary").v2;
@@ -11,16 +11,40 @@ cloudinary.config({
 
 module.exports.index = async (req, res) => {
 	try {
-		var newBook = await Book.find().sort({ createdAt: -1 }).limit(4);
+		const newBook = await Book.find()
+			.populate("category", "-_id -__v -isDeleted")
+			.sort({ createdAt: -1 })
+			.limit(4);
 		// const bookinorder =
-		var books = await Book.find({ isDelete: false }).populate(
+
+		const hotBook = await Order.aggregate([
+			{ $match: { status: { $ne: 2 } } },
+			{ $unwind: "$products" },
+			{ $group: { _id: "$products.book", sum: { $sum: 1 } } },
+			{
+				$lookup: {
+					from: "books",
+					localField: "_id",
+					foreignField: "_id",
+
+					as: "books_Product",
+				},
+			},
+			{ $match: { "books_Product.isDeleted": { $ne: true } } },
+			{
+				$sort: { sum: -1 },
+			},
+			{
+				$limit: 4,
+			},
+		]);
+		const books = await Book.find({ isDeleted: false }).populate(
 			"category",
-			"-_id"
+			"-_id -__v -isDeleted"
 		);
 
 		return res.status(201).json({
-			newBook,
-			books,
+			hotBook,
 		});
 	} catch (error) {
 		return res.status(404).json(`fail ${error}`);
@@ -33,7 +57,8 @@ module.exports.getBook = async (req, res) => {
 
 module.exports.delete = async (req, res) => {
 	try {
-		await Book.updateOne({ _id: req.params.id }, { isDelete: true });
+		console.log("asdfad");
+		await Book.updateOne({ _id: req.params.id }, { isDeleted: true });
 		return res.status(201).json("delete success!");
 	} catch (error) {
 		res.status(400).json("delete fail!");
