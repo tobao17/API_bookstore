@@ -34,8 +34,9 @@ module.exports.create = async (req, res) => {
 module.exports.postLogin = async (req, res) => {
 	const { username, password } = req.body;
 	const UserExits = await User.findOne({ username });
+
 	if (!UserExits) {
-		return res.status(202).json({ msg: `Tài khoản không tồn tại !` });
+		return res.status(202).json({ msg: `Sai tài khoản hoặc mật khẩu !` });
 	}
 	if (UserExits.wrongLoginCount > 4) {
 		return res
@@ -51,7 +52,7 @@ module.exports.postLogin = async (req, res) => {
 				},
 			}
 		);
-		return res.status(202).json({ msg: `Sai mật khẩu!` });
+		return res.status(202).json({ msg: `Sai tài khoản hoặc mật khẩu!` });
 	}
 	// if (UserExits.role !== 0) {
 	//   return res.status(202).json({ msg: `Lỗi truy cập! bạn đang ở quyền user` });
@@ -64,12 +65,20 @@ module.exports.postLogin = async (req, res) => {
 				role: UserExits.role,
 			},
 		};
+		const { username, address } = UserExits;
+		await User.updateOne(
+			{ username },
+			{
+				wrongLoginCount: 0,
+			}
+		);
 		const accessToken = jwt.sign(payload, process.env.jwtkey, {
 			expiresIn: "1h",
 		});
+
 		return res
 			.status(202)
-			.json({ user: UserExits, accessToken: accessToken });
+			.json({ username, address, accessToken: accessToken });
 	}
 };
 
