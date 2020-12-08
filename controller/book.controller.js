@@ -45,6 +45,8 @@ module.exports.index = async (req, res) => {
 
 		return res.status(201).json({
 			hotBook,
+			newBook,
+			books
 		});
 	} catch (error) {
 		return res.status(404).json(`fail ${error}`);
