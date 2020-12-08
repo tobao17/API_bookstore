@@ -7,7 +7,7 @@ var bookSchema = new mongoose.Schema(
 		price: Number,
 		status: Number,
 		quantity: Number,
-		isDelete: {
+		isDeleted: {
 			// view product
 			type: Boolean,
 			default: false,
