@@ -33,7 +33,7 @@ module.exports.getBook = async (req, res) => {
 
 module.exports.delete = async (req, res) => {
 	try {
-		await Book.updateOne({ _id: req.params.id }, { isDelete: true });
+		await Book.updateOne({ _id: req.params.id }, { isDeleted: true });
 		return res.status(201).json("delete success!");
 	} catch (error) {
 		res.status(400).json("delete fail!");
