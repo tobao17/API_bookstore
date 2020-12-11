@@ -24,6 +24,7 @@ const userRouter = require("./router/user.router");
 const cartRouter = require("./router/cart.router");
 const orderRouter = require("./router/order.router");
 const billRouter = require("./router/bill.router");
+const testjwtRouter = require("./router/testjwt.router");
 //
 //
 //
@@ -41,6 +42,7 @@ app.use("/user", userRouter);
 app.use("/cart", cartRouter);
 app.use("/order", orderRouter);
 app.use("/bill", billRouter);
+app.use("/testjwt", testjwtRouter);
 
 var port = process.env.PORT || 3000;
 // listen for requests :)
