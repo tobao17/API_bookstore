@@ -202,6 +202,18 @@ module.exports.deleteCart = async (req, res) => {
 		return res.status(400).json({ msg: `delete fail!`, error: `${error}` });
 	}
 };
+module.exports.cartUser = async (req, res) => {
+	try {
+		const userId = req.token.user.id;
+
+		const userCart = await User.findById(userId);
+		const { cart } = userCart;
+
+		return res.status(200).json({ msg: `success!`, data: cart });
+	} catch (error) {
+		return res.status(400).json({ msg: `delete fail!`, error: `${error}` });
+	}
+};
 module.exports.deleteBook = async (req, res) => {
 	const userId = req.token.user.id; //get user
 	const { bookId } = req.params;
