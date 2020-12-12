@@ -78,7 +78,7 @@ module.exports.detail = async (req, res) => {
 		const book = await Book.findOne({
 			_id: req.params.id,
 			isDeleted: false,
-		}).populate("category", "-_id");
+		}).populate("category");
 		return res.status(200).json(book);
 	} catch (error) {
 		res.status(400).json("fail cc!");
