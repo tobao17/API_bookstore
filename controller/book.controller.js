@@ -47,7 +47,7 @@ module.exports.index = async (req, res) => {
 		// 					 AND instock >= orders.ordered );
 		const books = await Book.find({ isDeleted: false }).populate(
 			"category",
-			"-_id -__v "
+			"-__v "
 		);
 
 		return res.status(201).json({
