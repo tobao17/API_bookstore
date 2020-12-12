@@ -23,6 +23,8 @@ module.exports.add = async (req, res) => {
 
 //chu xu ly xong  bill xoa ???
 
+//fix loii 404 ???
+
 module.exports.deleteOrder = async (req, res) => {
 	const OrderId = req.params.id;
 
