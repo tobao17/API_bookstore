@@ -73,10 +73,11 @@ module.exports.delete = async (req, res) => {
 	}
 };
 module.exports.detail = async (req, res) => {
+	console.log(req.params.id);
 	try {
 		const book = await Book.findOne({
 			_id: req.params.id,
-			isDelete: false,
+			isDeleted: false,
 		}).populate("category", "-_id");
 		return res.status(200).json(book);
 	} catch (error) {
