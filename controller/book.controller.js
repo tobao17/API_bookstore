@@ -98,7 +98,14 @@ module.exports.postCreate = async (req, res) => {
 		}
 
 		const books = await Book.create(req.body);
-		return res.status(201).json({ msd: "create success!", data: books });
+		const booksResponse = await Book.findById(books._id).populate(
+			"category",
+			"-__v "
+		);
+
+		return res
+			.status(201)
+			.json({ msd: "create success!", data: booksResponse });
 	} catch (error) {
 		return res.status(404).json(`create fail ${error} !`);
 	}
