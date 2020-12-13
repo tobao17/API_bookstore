@@ -165,8 +165,8 @@ module.exports.searchBooks = async (req, res) => {
 	console.log(req.body.keyword);
 	try {
 		const bookSearch = await Book.find({
-			isDelete: false,
-			title: { $regex: req.body.keyword, $options: "$i" },
+			isDeleted: false,
+			title: { $regex: req.body.keyword, $options: "$i" }, // tim tat ca cac keywork khong phan biet chu hoa chu thuong
 		});
 		return res.status(200).json(bookSearch);
 		//
