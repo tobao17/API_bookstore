@@ -147,9 +147,16 @@ module.exports.postUpdate = async (req, res) => {
 				},
 			}
 		);
-		return res.status(200).json(`update success!`);
+
+		const BookEditResponse = (await Book.findById(req.body._id)).populate(
+			"category",
+			"-__v "
+		);
+		return res
+			.status(200)
+			.json({ msd: `update success!`, data: BookEditResponse });
 	} catch (error) {
-		return res.status(404).json(`update fail!`);
+		return res.status(400).json(`update fail!`);
 	}
 };
 module.exports.searchBooks = async (req, res) => {
