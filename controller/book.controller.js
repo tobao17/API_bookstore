@@ -148,7 +148,7 @@ module.exports.postUpdate = async (req, res) => {
 			}
 		);
 
-		const BookEditResponse = (await Book.findById(req.body._id)).populate(
+		const BookEditResponse = await Book.findById(req.body._id).populate(
 			"category",
 			"-__v "
 		);
