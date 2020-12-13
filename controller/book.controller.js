@@ -162,11 +162,13 @@ module.exports.postUpdate = async (req, res) => {
 	}
 };
 module.exports.searchBooks = async (req, res) => {
-	console.log(req.body.keyword);
 	try {
 		const bookSearch = await Book.find({
 			isDeleted: false,
-			title: { $regex: req.body.keyword, $options: "$i" }, // tim tat ca cac keywork khong phan biet chu hoa chu thuong
+			$or: [
+				{ title: { $regex: req.body.keyword, $options: "$i" } },
+				{ author: { $regex: req.body.keyword, $options: "$i" } },
+			], // tim tat ca cac keywork khong phan biet chu hoa chu thuong
 		}).populate("category", "-__v ");
 		return res.status(200).json(bookSearch);
 		//
