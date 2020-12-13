@@ -124,6 +124,7 @@ module.exports.postUpdate = async (req, res) => {
 	}
 	const {
 		title,
+		category,
 		author,
 		description,
 		price,
@@ -144,6 +145,7 @@ module.exports.postUpdate = async (req, res) => {
 					status,
 					quantity,
 					images,
+					category,
 				},
 			}
 		);
