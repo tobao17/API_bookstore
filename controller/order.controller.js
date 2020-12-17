@@ -31,6 +31,22 @@ module.exports.checkorder = async (req, res) => {
 			.json({ msg: `get my order fail!`, error: `${error}` });
 	}
 };
+module.exports.orderDetail = async (req, res) => {
+	const OrderId = req.params.id;
+	try {
+		const myOrder = await Order.findById(OrderId)
+			.populate("products.book", "-description -isDelete -quantity")
+			.populate(
+				"user",
+				"-role -wrongLoginCount -status -wallet -password -cart -createdAt -updatedAt -address"
+			);
+		return res.status(200).json({ msg: ` success!`, data: myOrder });
+	} catch (error) {
+		return res
+			.status(400)
+			.json({ msg: `get my order fail!`, error: `${error}` });
+	}
+};
 
 module.exports.add = async (req, res) => {
 	req.body.user = req.token.user.id;

@@ -6,4 +6,5 @@ router.post("/add", orderController.add); // all product =>  loai bo de test  //
 router.get("/delete/:id", orderController.deleteOrder);
 router.get("/myorder", orderController.checkorder);
 router.get("/", orderController.index);
+router.get("/detail/:id", orderController.orderDetail);
 module.exports = router;
