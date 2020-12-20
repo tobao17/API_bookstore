@@ -3,7 +3,7 @@ const router = express.Router();
 const auth = require("../middleware/verifiedToken.middleware");
 const orderController = require("../controller/order.controller");
 router.post("/add", orderController.add); // all product =>  loai bo de test  // auth.verified
-router.get("/update", orderController.update);
+router.post("/update", orderController.update);
 router.get("/myorder", auth.verified, orderController.checkorder);
 router.get("/", orderController.index);
 router.get("/detail/:id", orderController.orderDetail);
