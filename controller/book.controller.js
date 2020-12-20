@@ -64,22 +64,28 @@ module.exports.categoryBook = async (req, res) => {
 	try {
 		const ngoaingu = await Book.find({
 			category: "5f789d7d7c17be338c676efa",
-		});
+			isDeleted: false,
+		}).populate("category", "-__v ");
 		const tamly = await Book.find({
 			category: "5f789d757c17be338c676ef9",
-		});
+			isDeleted: false,
+		}).populate("category", "-__v ");
 		const tieusuhoiky = await Book.find({
 			category: "5f789d427c17be338c676ef8",
-		});
+			isDeleted: false,
+		}).populate("category", "-__v ");
 		const vanhoc = await Book.find({
 			category: "5f789d047c17be338c676ef5",
-		});
+			isDeleted: false,
+		}).populate("category", "-__v ");
 		const kinhte = await Book.find({
 			category: "5f789d1d7c17be338c676ef7",
-		});
+			isDeleted: false,
+		}).populate("category", "-__v ");
 		const sachthieunhi = await Book.find({
 			category: "5f789d147c17be338c676ef6",
-		});
+			isDeleted: false,
+		}).populate("category", "-__v ");
 		return res.status(200).json({
 			msd: "success!",
 			data: { kinhte, sachthieunhi, tieusuhoiky, tamly, ngoaingu, vanhoc },
