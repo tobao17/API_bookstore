@@ -68,16 +68,20 @@ module.exports.update = async (req, res) => {
 	const { OrderId, status } = req.body;
 	try {
 		await Order.updateOne({ _id: OrderId }, { status: status });
-		const OrderUpdate = await Order.findById(OrderId);
-		// if (status == 1) {
-		// 	const orderComplete = await Order.findById(OrderId);
-
-		// 	await Bill.create({ Order: OrderId });
-		// 	//	console.log(orderComplete);
-		// 	const { products } = orderComplete;
-		// 	console.log(products);
-		// 	decreaseQuantity(products);
-		// }
+		const OrderUpdate = await Order.findById(OrderId)
+			.populate("products.book", "-description -isDelete -quantity")
+			.populate(
+				"user",
+				"-role -wrongLoginCount -status -wallet -password -cart -createdAt -updatedAt -address"
+			);
+		if (status == 1) {
+			//	const orderComplete = await Order.findById(OrderId);
+			await Bill.create({ Order: OrderId });
+			//	console.log(orderComplete);
+			const { products } = OrderUpdate;
+			console.log(products);
+			decreaseQuantity(products);
+		}
 
 		return res
 			.status(200)
@@ -85,4 +89,17 @@ module.exports.update = async (req, res) => {
 	} catch (error) {
 		return res.status(400).json({ msg: `update fail!`, error: `${error}` });
 	}
+};
+const decreaseQuantity = (products) => {
+	let bulkOptions = products.map((item) => {
+		// truyen vao mot mảng pro duct
+		return {
+			updateOne: {
+				filter: { _id: item.book }, // lay ra id
+				update: { $inc: { quantity: -item.quantity } }, // how update??
+			},
+		};
+	});
+
+	Product.bulkWrite(bulkOptions); // goi product truyen bulkWrite
 };
