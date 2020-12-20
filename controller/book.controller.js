@@ -164,9 +164,10 @@ module.exports.postUpdate = async (req, res) => {
 module.exports.searchBooks = async (req, res) => {
 	try {
 		const bookSearch = await Book.find({
-			isDeleted: false,
+			isDeleted: false, // kiem tra khong xoa
 			$or: [
-				{ title: { $regex: req.body.keyword, $options: "$i" } },
+				// dung de tim kiem giua title or author
+				{ title: { $regex: req.body.keyword, $options: "$i" } }, // tim kiem trong co so du lieu
 				{ author: { $regex: req.body.keyword, $options: "$i" } },
 			], // tim tat ca cac keywork khong phan biet chu hoa chu thuong
 		}).populate("category", "-__v ");

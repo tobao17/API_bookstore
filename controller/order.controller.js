@@ -63,11 +63,14 @@ module.exports.add = async (req, res) => {
 	}
 };
 
-module.exports.deleteOrder = async (req, res) => {
-	const OrderId = req.params.id;
+module.exports.update = async (req, res) => {
+	const { OrderId, status } = req.body;
 	try {
-		await Order.updateOne({ _id: OrderId }, { status: 2 });
-		return res.status(200).json({ msg: `delete success!` });
+		await Order.updateOne({ _id: OrderId }, { status: status });
+		const OrderUpdate = await Order.findById(OrderId);
+		return res
+			.status(200)
+			.json({ msg: `update success!`, data: OrderUpdate });
 	} catch (error) {
 		return res.status(400).json({ msg: `delete fail!`, error: `${error}` });
 	}

@@ -1,7 +1,6 @@
 const Order = require("../models/order.model");
 const Product = require("../models/book.model");
 const Bill = require("../models/bill.model");
-const bill = require("../models/bill.model");
 
 module.exports.add = async (req, res) => {
 	const OrderId = req.params.id;
@@ -41,15 +40,16 @@ module.exports.deleteOrder = async (req, res) => {
 
 const decreaseQuantity = (products) => {
 	let bulkOptions = products.map((item) => {
+		// truyen vao mot mảng pro duct
 		return {
 			updateOne: {
-				filter: { _id: item.book },
-				update: { $inc: { quantity: -item.quantity } },
+				filter: { _id: item.book }, // lay ra id
+				update: { $inc: { quantity: -item.quantity } }, // how update??
 			},
 		};
 	});
 
-	Product.bulkWrite(bulkOptions);
+	Product.bulkWrite(bulkOptions); // goi product truyen bulkWrite
 };
 const IncQuantity = (products) => {
 	let bulkOptions = products.map((item) => {
