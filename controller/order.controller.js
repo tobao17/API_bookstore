@@ -1,5 +1,6 @@
 const Order = require("../models/order.model");
 const Product = require("../models/book.model");
+const Bill = require("../models/bill.model");
 
 module.exports.index = async (req, res) => {
 	try {
@@ -68,12 +69,20 @@ module.exports.update = async (req, res) => {
 	try {
 		await Order.updateOne({ _id: OrderId }, { status: status });
 		const OrderUpdate = await Order.findById(OrderId);
+		// if (status == 1) {
+		// 	const orderComplete = await Order.findById(OrderId);
 
-		if (statusg)
-			return res
-				.status(200)
-				.json({ msg: `update success!`, data: OrderUpdate });
+		// 	await Bill.create({ Order: OrderId });
+		// 	//	console.log(orderComplete);
+		// 	const { products } = orderComplete;
+		// 	console.log(products);
+		// 	decreaseQuantity(products);
+		// }
+
+		return res
+			.status(200)
+			.json({ msg: `update success!`, data: OrderUpdate });
 	} catch (error) {
-		return res.status(400).json({ msg: `delete fail!`, error: `${error}` });
+		return res.status(400).json({ msg: `update fail!`, error: `${error}` });
 	}
 };
