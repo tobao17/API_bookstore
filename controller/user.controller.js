@@ -10,7 +10,15 @@ module.exports.index = async (req, res) => {
 		return res.status(404).json(`error ${error}`);
 	}
 };
-
+module.exports.userDetail = async (req, res) => {
+	const idUser = req.params.id;
+	try {
+		var users = await User.findById(idUser);
+		return res.status(200).json(users);
+	} catch (error) {
+		return res.status(404).json(`error ${error}`);
+	}
+};
 module.exports.create = async (req, res) => {
 	const { email, username } = req.body;
 	const userNameExist = await User.findOne({ username });
@@ -39,6 +47,7 @@ module.exports.postLogin = async (req, res) => {
 		return res.status(202).json({ msg: `Sai tài khoản hoặc mật khẩu !` });
 	}
 	if (UserExits.wrongLoginCount > 4) {
+		// sai nhieu can gui mail kich hoat
 		return res
 			.status(202)
 			.json({ msg: `Bạn đã nhập mật khẩu sai quá nhiều lần` });
@@ -73,6 +82,7 @@ module.exports.postLogin = async (req, res) => {
 			}
 		);
 		const accessToken = jwt.sign(payload, process.env.jwtkey, {
+			//set up jwt
 			expiresIn: "1h",
 		});
 
