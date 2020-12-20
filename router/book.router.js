@@ -18,7 +18,7 @@ const role = require("../middleware/role.validate");
 //
 
 router.get("/", bookController.index);
-
+router.get("/getbookCategory", bookController.categoryBook);
 router.get("/getbook/:id", bookController.detail);
 router.get(
 	"/getbook",

@@ -68,9 +68,11 @@ module.exports.update = async (req, res) => {
 	try {
 		await Order.updateOne({ _id: OrderId }, { status: status });
 		const OrderUpdate = await Order.findById(OrderId);
-		return res
-			.status(200)
-			.json({ msg: `update success!`, data: OrderUpdate });
+
+		if (statusg)
+			return res
+				.status(200)
+				.json({ msg: `update success!`, data: OrderUpdate });
 	} catch (error) {
 		return res.status(400).json({ msg: `delete fail!`, error: `${error}` });
 	}

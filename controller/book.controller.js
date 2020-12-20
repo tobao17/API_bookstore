@@ -60,6 +60,35 @@ module.exports.index = async (req, res) => {
 	}
 };
 
+module.exports.categoryBook = async (req, res) => {
+	try {
+		const ngoaingu = await Book.find({
+			category: "5f789d7d7c17be338c676efa",
+		});
+		const tamly = await Book.find({
+			category: "5f789d757c17be338c676ef9",
+		});
+		const tieusuhoiky = await Book.find({
+			category: "5f789d427c17be338c676ef8",
+		});
+		const vanhoc = await Book.find({
+			category: "5f789d047c17be338c676ef5",
+		});
+		const kinhte = await Book.find({
+			category: "5f789d1d7c17be338c676ef7",
+		});
+		const sachthieunhi = await Book.find({
+			category: "5f789d147c17be338c676ef6",
+		});
+		return res.status(200).json({
+			msd: "success!",
+			data: { kinhte, sachthieunhi, tieusuhoiky, tamly, ngoaingu, vanhoc },
+		});
+	} catch (error) {
+		return res.status(400).json(error);
+	}
+};
+
 module.exports.getBook = async (req, res) => {
 	res.json(res.paginateResult);
 };
