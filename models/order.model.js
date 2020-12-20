@@ -21,10 +21,11 @@ const OrderSchema = new Schema(
 			ref: "User",
 		},
 		address: String,
+		phone: String,
 		note: String,
 		status: {
 			type: Number,
-			default: false, //0 chua xu ly ,1 xac nhan don hang , 2 huy don hang
+			default: 0, //0 chua xu ly ,1 xac nhan don hang , 2 huy don hang
 		},
 		totalrice: Number,
 	},
