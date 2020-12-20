@@ -1,6 +1,7 @@
 const Order = require("../models/order.model");
 const Product = require("../models/book.model");
 const Bill = require("../models/bill.model");
+const User = require("../models/bill.model");
 
 module.exports.index = async (req, res) => {
 	try {
@@ -51,6 +52,7 @@ module.exports.orderDetail = async (req, res) => {
 
 module.exports.add = async (req, res) => {
 	req.body.user = req.token.user.id;
+	console.log(req.body.user);
 
 	try {
 		console.log(req.body);
