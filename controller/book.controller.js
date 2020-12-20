@@ -94,7 +94,18 @@ module.exports.categoryBook = async (req, res) => {
 		return res.status(400).json(error);
 	}
 };
-
+module.exports.getBookbycateId = async (req, res) => {
+	console.log(req.params.id);
+	try {
+		const book = await Book.find({
+			category: req.params.id,
+			isDeleted: false,
+		}).populate("category", "-__v ");
+		return res.status(200).json({ msd: "success!", data: book });
+	} catch (error) {
+		res.status(400).json("fail cc!");
+	}
+};
 module.exports.getBook = async (req, res) => {
 	res.json(res.paginateResult);
 };
