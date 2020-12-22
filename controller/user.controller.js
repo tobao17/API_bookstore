@@ -1,10 +1,14 @@
 const bcryptjs = require("bcryptjs");
 const User = require("../models/user.model");
+const sendMail = require("../middleware/sendMail.middleware");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
+
+const { text } = require("body-parser");
+
 module.exports.index = async (req, res) => {
 	try {
-		var users = await User.find();
+		let users = await User.find();
 		return res.status(200).json(users);
 	} catch (error) {
 		return res.status(404).json(`error ${error}`);
@@ -13,7 +17,7 @@ module.exports.index = async (req, res) => {
 module.exports.userDetail = async (req, res) => {
 	const idUser = req.params.id;
 	try {
-		var users = await User.findById(idUser);
+		let users = await User.findById(idUser);
 		return res.status(200).json(users);
 	} catch (error) {
 		return res.status(404).json(`error ${error}`);
@@ -29,7 +33,7 @@ module.exports.create = async (req, res) => {
 	if (userEmailExist) {
 		return res.status(202).json("Gmail đăng kí đã tồn tại");
 	}
-	var hash = bcryptjs.hashSync(req.body.password);
+	let hash = bcryptjs.hashSync(req.body.password);
 	req.body.password = hash;
 	try {
 		await User.create(req.body);
@@ -52,6 +56,7 @@ module.exports.postLogin = async (req, res) => {
 			.status(202)
 			.json({ msg: `Bạn đã nhập mật khẩu sai quá nhiều lần` });
 	}
+	console.log(UserExits);
 	if (!bcryptjs.compareSync(password, UserExits.password)) {
 		await User.updateOne(
 			{ username },
@@ -89,6 +94,56 @@ module.exports.postLogin = async (req, res) => {
 		return res
 			.status(202)
 			.json({ username, address, accessToken: accessToken });
+	}
+};
+
+//fortgetPassword
+
+module.exports.forgetPassword = async (req, res) => {
+	const { email } = req.body;
+	try {
+		const emailUser = await User.findOne({ email: email });
+		console.log(emailUser);
+		if (!emailUser) {
+			return res.status(400).json(`User with that email dont match!`);
+		}
+		const payload = {
+			user: {
+				id: emailUser._id,
+			},
+		};
+		console.log(payload);
+		const Token = jwt.sign(payload, process.env.jwtkey, {
+			//set up jwt
+			expiresIn: "10m",
+		});
+		sendMail.sendMail(email, Token, 1);
+		return res.status(200).json(`email đã được gửi tới ${email}`);
+	} catch (error) {
+		return res.status(200).json(error);
+	}
+};
+
+///rest pass
+module.exports.resetPassword = async (req, res) => {
+	const { newPassword, token } = req.body;
+	let id = "";
+
+	if (!newPassword) {
+		return res.status(400).json("faill!");
+	}
+	if (token) {
+		jwt.verify(token, process.env.jwtkey, (err, decoded) => {
+			if (err) return res.status(403).json(`${err}`);
+			id = decoded.user.id;
+		});
+	}
+	try {
+		let hash = bcryptjs.hashSync(newPassword);
+		await User.findOneAndUpdate({ _id: id }, { password: hash });
+		return res.status(200).json({ msg: "ban da doi mat khau thanh cong!" });
+	} catch (error) {
+		return res.status(400).json(error);
 	}
 };
 
@@ -225,6 +280,7 @@ module.exports.cartUser = async (req, res) => {
 	}
 };
 module.exports.deleteBook = async (req, res) => {
+	//xoa book in cart
 	const userId = req.token.user.id; //get user
 	const { bookId } = req.params;
 	const user = await User.findById(userId);
