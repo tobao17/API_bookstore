@@ -22,7 +22,7 @@ module.exports.sendMail = async function paginateResult(email, token, option) {
 			html: `<h1>Hello world </h1> 
 			<br/>
 			<p>Thay đổi mật khẩu tại đây</p>
-			<a> ${token}</a>
+			<a>https://utebook.herokuapp.com/forgotpass/${token}</a>
 			 `, // html body
 		};
 	}
