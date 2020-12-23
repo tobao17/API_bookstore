@@ -12,6 +12,7 @@ module.exports.index = async (req, res) => {
 		// });
 
 		// qua nhieu du lieu thua
+		const bill = await Bill.find().populate("Order");
 
 		return res.status(200).json({
 			msd: "succes",
