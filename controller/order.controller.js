@@ -71,7 +71,7 @@ module.exports.add = async (req, res) => {
 };
 
 module.exports.update = async (req, res) => {
-	const { OrderId, status } = req.body;
+	const { OrderId, status, userName } = req.body;
 	try {
 		await Order.updateOne({ _id: OrderId }, { status: status });
 		const OrderUpdate = await Order.findById(OrderId)
@@ -82,7 +82,7 @@ module.exports.update = async (req, res) => {
 			);
 		if (status == 1) {
 			//	const orderComplete = await Order.findById(OrderId);
-			await Bill.create({ Order: OrderId });
+			await Bill.create({ Order: OrderId, userName: userName });
 			//	console.log(orderComplete);
 			const { products } = OrderUpdate;
 			console.log(products);

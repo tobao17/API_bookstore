@@ -6,6 +6,7 @@ var billSchema = new mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Order",
 		},
+		userName: String,
 		created: {
 			type: Date,
 			default: Date.now,

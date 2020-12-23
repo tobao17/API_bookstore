@@ -2,6 +2,26 @@ const Order = require("../models/order.model");
 const Product = require("../models/book.model");
 const Bill = require("../models/bill.model");
 
+module.exports.index = async (req, res) => {
+	try {
+		// let bill = await Bill.find().populate({
+		// 	path: "Order",
+		// 	populate: {
+		// 		path: "user",
+		// 	},
+		// });
+
+		// qua nhieu du lieu thua
+
+		return res.status(200).json({
+			msd: "succes",
+			data: bill,
+		});
+	} catch (error) {
+		return res.status(404).json(`error ${error}`);
+	}
+};
+
 module.exports.add = async (req, res) => {
 	const OrderId = req.params.id;
 
