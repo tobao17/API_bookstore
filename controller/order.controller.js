@@ -1,7 +1,7 @@
 const Order = require("../models/order.model");
 const Product = require("../models/book.model");
 const Bill = require("../models/bill.model");
-const User = require("../models/bill.model");
+const User = require("../models/user.model");
 
 module.exports.index = async (req, res) => {
 	try {
@@ -55,9 +55,13 @@ module.exports.add = async (req, res) => {
 	console.log(req.body.user);
 
 	try {
-		console.log(req.body);
+		//	console.log(req.body);
 		const order = await Order.create(req.body);
-		await User.findOneAndUpdate({ _id: req.body.user }, { cart: [] });
+		const user = await User.findOneAndUpdate(
+			{ _id: req.body.user },
+			{ cart: [] }
+		);
+		console.log(user);
 		return res.status(201).json({ msg: "add order success!", data: order });
 	} catch (error) {
 		return res.status(400).json({
