@@ -71,7 +71,9 @@ module.exports.add = async (req, res) => {
 };
 
 module.exports.update = async (req, res) => {
-	const { OrderId, status, userName } = req.body;
+	const { OrderId, status, preStatus } = req.body;
+
+	console.log(preStatus);
 	try {
 		await Order.updateOne({ _id: OrderId }, { status: status });
 		const OrderUpdate = await Order.findById(OrderId)
@@ -80,19 +82,26 @@ module.exports.update = async (req, res) => {
 				"user",
 				"-role -wrongLoginCount -status -wallet -password -cart -createdAt -updatedAt -address"
 			);
+
+		console.log(OrderUpdate);
 		if (status == 1) {
 			//	const orderComplete = await Order.findById(OrderId);
-			await Bill.create({ Order: OrderId, userName: userName });
+			await Bill.create({ ...req.body, Order: OrderId });
 			//	console.log(orderComplete);
 			const { products } = OrderUpdate;
-			console.log(products);
 			decreaseQuantity(products);
 		}
 
+		if (status == 3 && preStatus == 1) {
+			//khach hang bung hang
+			const { products } = OrderUpdate;
+			IncQuantity(products);
+		}
 		return res
 			.status(200)
 			.json({ msg: `update success!`, data: OrderUpdate });
 	} catch (error) {
+		console.log(error);
 		return res.status(400).json({ msg: `update fail!`, error: `${error}` });
 	}
 };
@@ -103,6 +112,19 @@ const decreaseQuantity = (products) => {
 			updateOne: {
 				filter: { _id: item.book }, // lay ra id
 				update: { $inc: { quantity: -item.quantity } }, // how update??
+			},
+		};
+	});
+
+	Product.bulkWrite(bulkOptions); // goi product truyen bulkWrite
+};
+const IncQuantity = (products) => {
+	let bulkOptions = products.map((item) => {
+		// truyen vao mot mảng pro duct
+		return {
+			updateOne: {
+				filter: { _id: item.book }, // lay ra id
+				update: { $inc: { quantity: +item.quantity } }, // how update??
 			},
 		};
 	});

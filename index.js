@@ -73,7 +73,7 @@ app.use("/categori", categoriesRouter);
 app.use("/user", userRouter);
 app.use("/cart", cartRouter);
 app.use("/order", orderRouter);
-app.use("/billl", billRouter);
+app.use("/bill", billRouter);
 app.use("/testjwt", testjwtRouter);
 
 var port = process.env.PORT || 3001;

@@ -7,6 +7,8 @@ var billSchema = new mongoose.Schema(
 			ref: "Order",
 		},
 		userName: String,
+		products: Array,
+		totalPrice: Number,
 		created: {
 			type: Date,
 			default: Date.now,

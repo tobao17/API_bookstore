@@ -25,7 +25,7 @@ const OrderSchema = new Schema(
 		note: String,
 		status: {
 			type: Number,
-			default: 0, //0 chua xu ly ,1 xac nhan don hang , 2 huy don hang
+			default: 0, //0 chua xu ly ,1 dang giao hang ,2 dang giao hang , 3 huy don hang,
 		},
 		totalrice: Number,
 	},

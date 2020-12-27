@@ -15,7 +15,21 @@ module.exports.index = async (req, res) => {
 		const bill = await Bill.find().populate("Order");
 
 		return res.status(200).json({
-			msd: "succes",
+			msd: "success",
+			data: bill,
+		});
+	} catch (error) {
+		return res.status(404).json(`error ${error}`);
+	}
+};
+module.exports.delete = async (req, res) => {
+	const BillId = req.params.billId;
+
+	try {
+		const bill = await Bill.findByIdAndDelete(BillId);
+
+		return res.status(200).json({
+			msd: " delete success",
 			data: bill,
 		});
 	} catch (error) {
