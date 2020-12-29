@@ -49,7 +49,32 @@ module.exports.orderDetail = async (req, res) => {
 			.json({ msg: `get my order fail!`, error: `${error}` });
 	}
 };
+module.exports.searchOrder = async (req, res) => {
+	// console.log(req.body.keyword);
+	//const searchText = req.body.keyword;
+	console.log(searchText);
+	try {
+		const order = await Order.find({})
+			.populate("products.book", "-description -isDelete -quantity")
+			.populate(
+				"user",
+				"-role -wrongLoginCount -status -wallet -password -cart -createdAt -updatedAt -address"
+			); //chua toi uu
+		const orderSearch = order.filter((item) => {
+			if (item.address.includes(searchText)) return item;
+			if (item.user.username.includes(searchText)) return item;
+			if (item._id.toString().slice(20).includes(searchText)) return item;
+		}); // chua toi uu --> lam truoc chay do an--> quay lai sau
 
+		return res.status(200).json({
+			msd: "success",
+			data: orderSearch,
+		});
+		//
+	} catch (error) {
+		return res.status(404).json(`search fail ${error}`);
+	}
+};
 module.exports.add = async (req, res) => {
 	req.body.user = req.token.user.id;
 	console.log(req.body.user);

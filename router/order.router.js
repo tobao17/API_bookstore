@@ -7,4 +7,5 @@ router.post("/update", orderController.update);
 router.get("/myorder", auth.verified, orderController.checkorder);
 router.get("/", orderController.index);
 router.get("/detail/:id", orderController.orderDetail);
+router.post("/search", orderController.searchOrder);
 module.exports = router;
