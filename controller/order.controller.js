@@ -51,7 +51,7 @@ module.exports.orderDetail = async (req, res) => {
 };
 module.exports.searchOrder = async (req, res) => {
 	// console.log(req.body.keyword);
-	//const searchText = req.body.keyword;
+	const searchText = req.body.keyword;
 	console.log(searchText);
 	try {
 		const order = await Order.find({})
