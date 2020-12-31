@@ -11,7 +11,7 @@ cloudinary.config({
 
 module.exports.index = async (req, res) => {
 	try {
-		const newBook = await Book.find()
+		const newBook = await Book.find({ isDeleted: false })
 			.populate("category", "-_id -__v ")
 			.sort({ createdAt: -1 })
 			.limit(4);
