@@ -3,8 +3,17 @@ const User = require("../models/user.model");
 const sendMail = require("../middleware/sendMail.middleware");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
-
+const { OAuth2Client } = require("google-auth-library");
 const { text } = require("body-parser");
+const jwt_decode = require("jwt-decode");
+require("dotenv").config();
+var cloudinary = require("cloudinary").v2;
+const { model } = require("../models/user.model");
+cloudinary.config({
+	cloud_name: process.env.cloud_name,
+	api_key: process.env.api_key,
+	api_secret: process.env.api_secret,
+});
 
 module.exports.index = async (req, res) => {
 	try {
@@ -39,10 +48,83 @@ module.exports.create = async (req, res) => {
 	let hash = bcryptjs.hashSync(req.body.password);
 	req.body.password = hash;
 	try {
+		if (req.file) {
+			await cloudinary.uploader.upload(req.file.path, (err, result) => {
+				if (result) {
+					req.body.avatar = result.url;
+				}
+				if (err) {
+					return res.status(403).json("create image fail ");
+				}
+			});
+		}
 		await User.create(req.body);
 		return res.status(201).json("create success");
 	} catch (error) {
 		return res.status(404).json(`create fail! ${error}`);
+	}
+};
+
+// module.exports.editUser = async (req, res) => {
+// 	const { username, address, id } = req.body;
+// 	console.log(req.body);
+
+// try {
+// 	if (req.file) {
+// 		await cloudinary.uploader.upload(req.file.path, (err, result) => {
+// 			if (result) {
+// 				req.body.avatar = result.url;
+// 			}
+// 			if (err) {
+// 				return res.status(403).json("create image fail ");
+// 			}
+// 		});
+// 	}
+
+// 	await User.updateOne(
+// 		{ _id: req.body._id },
+// 		{
+// 			$set: {
+// 				username,
+// 				address,
+// 				avatar: req.body.avatar,
+// 			},
+// 		}
+// 	);
+// 	return res.status(201).json("update success");
+// } catch (error) {
+// 	return res.status(404).json(`update fail! ${error}`);
+// }
+// 	return;
+// };
+module.exports.edit = async (req, res) => {
+	const { username, address, phone } = req.body;
+	try {
+		if (req.file) {
+			await cloudinary.uploader.upload(req.file.path, (err, result) => {
+				if (result) {
+					req.body.avatar = result.url;
+				}
+				if (err) {
+					return res.status(403).json("create image fail ");
+				}
+			});
+		}
+
+		await User.updateOne(
+			{ _id: req.body.id },
+			{
+				$set: {
+					phone: phone,
+					username,
+					address,
+					avatar: req.body.avatar,
+				},
+			}
+		);
+		return res.status(201).json("update success");
+	} catch (error) {
+		return res.status(404).json(`update fail! ${error}`);
 	}
 };
 
@@ -127,6 +209,91 @@ module.exports.forgetPassword = async (req, res) => {
 	} catch (error) {
 		return res.status(200).json(error);
 	}
+};
+
+module.exports.logingg = async (req, res) => {
+	// const token = req.body.token;
+
+	// const client = new OAuth2Client(
+	// 	"46698234435-2cjnkk9oqnvslr8dshm71jcvahlogqia.apps.googleusercontent.com"
+	// );
+
+	// client
+	// 	.verifyIdToken({
+	// 		token,
+	// 		audience:
+	// 			"46698234435-2cjnkk9oqnvslr8dshm71jcvahlogqia.apps.googleusercontent.com",
+	// 	})
+	// 	.then((res) => console.log(res));
+
+	// const token = req.body.token;
+	// console.log(req.body.token);
+	// if (token) {
+	// 	jwt.verify(token, process.env.jwtkey, (err, decoded) => {
+	// 		if (err) return res.status(403).json(`${err}`);
+	// 		//	id = decoded.user.id;
+	// 		console.log(decoded);
+	// 	});
+	// }
+	// jwt.decode(
+	// 	"eyJhbGciOiJSUzI1NiIsImtpZCI6IjI2MTI5YmE1NDNjNTZlOWZiZDUzZGZkY2I3Nzg5ZjhiZjhmMWExYTEiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI0NjY5ODIzNDQzNS0yY2pua2s5b3FudnNscjhkc2htNzFqY3ZhaGxvZ3FpYS5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsImF1ZCI6IjQ2Njk4MjM0NDM1LTJjam5razlvcW52c2xyOGRzaG03MWpjdmFobG9ncWlhLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTAyOTgzNjA2OTQ0MzA5OTQzMjM2IiwiZW1haWwiOiJjdW5jb25wcm85OEBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiYXRfaGFzaCI6Ikg4VjFidkhtU1RZV2tBVFlIb19KdWciLCJuYW1lIjoiSG_DoG5nIEhvw6AiLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EtL0FPaDE0R2plZnp1M21pUl9rYXZLMjJ3Z255a2FMVkVVRGk3c0xVVWFIblM5PXM5Ni1jIiwiZ2l2ZW5fbmFtZSI6Ikhvw6BuZyIsImZhbWlseV9uYW1lIjoiSG_DoCIsImxvY2FsZSI6InZpIiwiaWF0IjoxNjA5NTYyODUzLCJleHAiOjE2MDk1NjY0NTN9.MPrcnWviG7QI-yxbhd_AxfhO4JgnzcoUfopAfiuQZCdfQx9gMh4CSjB8pXuR5rv_Be7pJHX5vq7PIQ3DBpPmokKiIhFgjujeVe62If36ArnYMxU8Y6oYaE9SXlO0Kij6-sMRi-eCKl4C5gM5a-00ZUwYlu0c-4X_QtoMtFJoLNNeitl3N5vopzM_vV3bhvMwwsWG2TaWmuvqVmJf5g6dRJL1taN_jkEnJLR1ZW_XUKPSpsQXboy_h33sGO35cnivevPT15bernv1QF7aWqi_iwXps2XBo2ncSpq8MSB_4TMOksYnPWgip_e1y-NcCQnYrUGPSQ_Ce0oxrn2zgLCXZA"
+	// ).then(console.log(res));
+	const token = req.body.token;
+	var decoded = jwt_decode(token);
+	//	console.log(decoded);
+	const { email, name, picture } = decoded;
+	try {
+		const user = await User.findOne({ email });
+		console.log(user);
+		if (user) {
+			const payload = {
+				user: {
+					id: user._id,
+					username: user.username,
+					role: user.role,
+				},
+			};
+			console.log(payload);
+			const { username, address } = user;
+
+			const accessToken = jwt.sign(payload, process.env.jwtkey, {
+				//set up jwt
+				expiresIn: "1h",
+			});
+			//console.log(accessToken);
+			return res
+				.status(202)
+				.json({ username, address, accessToken: accessToken });
+		} else {
+			const usernew = await User.create({
+				email,
+				username: name,
+				password: token,
+				avatar: picture,
+			});
+			const payload = {
+				user: {
+					id: usernew._id,
+					username: usernew.username,
+					role: usernew.role,
+				},
+			};
+
+			const { username, address } = usernew;
+			const accessToken = jwt.sign(payload, process.env.jwtkey, {
+				//set up jwt
+				expiresIn: "1h",
+			});
+			//console.log(accessToken);
+			return res
+				.status(202)
+				.json({ username, address, accessToken: accessToken });
+		}
+	} catch (error) {}
+
+	return res.status(200).json({
+		msd: "mother fuck",
+	});
 };
 
 ///rest pass

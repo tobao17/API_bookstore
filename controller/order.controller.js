@@ -97,7 +97,6 @@ module.exports.add = async (req, res) => {
 
 module.exports.update = async (req, res) => {
 	const { OrderId, status, preStatus } = req.body;
-
 	console.log(preStatus);
 	try {
 		await Order.updateOne({ _id: OrderId }, { status: status });
