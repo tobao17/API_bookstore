@@ -7,6 +7,7 @@ const { OAuth2Client } = require("google-auth-library");
 const { text } = require("body-parser");
 const jwt_decode = require("jwt-decode");
 require("dotenv").config();
+const axios = require("axios");
 var cloudinary = require("cloudinary").v2;
 const { model } = require("../models/user.model");
 cloudinary.config({
@@ -141,7 +142,7 @@ module.exports.postLogin = async (req, res) => {
 			.status(202)
 			.json({ msg: `Bạn đã nhập mật khẩu sai quá nhiều lần` });
 	}
-	console.log(UserExits);
+	//console.log(UserExits);
 	if (!bcryptjs.compareSync(password, UserExits.password)) {
 		await User.updateOne(
 			{ username },
@@ -175,7 +176,7 @@ module.exports.postLogin = async (req, res) => {
 		);
 		const accessToken = jwt.sign(payload, process.env.jwtkey, {
 			//set up jwt
-			expiresIn: "1h",
+			expiresIn: "1m",
 		});
 
 		return res
@@ -211,33 +212,64 @@ module.exports.forgetPassword = async (req, res) => {
 	}
 };
 
-module.exports.logingg = async (req, res) => {
-	// const token = req.body.token;
+module.exports.logginFB = async (req, res) => {
+	const { userID, token } = req.body;
+	const URLres = `https://graph.facebook.com/v9.0/${userID}/?fields=id,name,email&access_token=${token}`;
+	if (!userID || !token) {
+		return res.status(400).json("Lỗi rồi pro ");
+	}
+	try {
+		const facebookRes = await axios.default.get(URLres);
+		const { email, name } = facebookRes.data;
+		const user = await User.findOne({ email });
+		if (user) {
+			const payload = {
+				user: {
+					id: user._id,
+					username: user.username,
+					role: user.role,
+				},
+			};
+			console.log(payload);
+			const { username, address } = user;
 
-	// const client = new OAuth2Client(
-	// 	"46698234435-2cjnkk9oqnvslr8dshm71jcvahlogqia.apps.googleusercontent.com"
-	// );
+			const accessToken = jwt.sign(payload, process.env.jwtkey, {
+				//set up jwt
+				expiresIn: "3m",
+			});
+			//console.log(accessToken);
+			return res
+				.status(202)
+				.json({ username, address, accessToken: accessToken });
+		} else {
+			const usernew = await User.create({
+				email,
+				username: name,
+				password: token,
+			});
+			const payload = {
+				user: {
+					id: usernew._id,
+					username: usernew.username,
+					role: usernew.role,
+				},
+			};
 
-	// client
-	// 	.verifyIdToken({
-	// 		token,
-	// 		audience:
-	// 			"46698234435-2cjnkk9oqnvslr8dshm71jcvahlogqia.apps.googleusercontent.com",
-	// 	})
-	// 	.then((res) => console.log(res));
+			const { username, address } = usernew;
+			const accessToken = jwt.sign(payload, process.env.jwtkey, {
+				//set up jwt
+				expiresIn: "3m",
+			});
+			//console.log(accessToken);
+			return res
+				.status(202)
+				.json({ username, address, accessToken: accessToken });
+		}
+	} catch (error) {}
+};
 
-	// const token = req.body.token;
-	// console.log(req.body.token);
-	// if (token) {
-	// 	jwt.verify(token, process.env.jwtkey, (err, decoded) => {
-	// 		if (err) return res.status(403).json(`${err}`);
-	// 		//	id = decoded.user.id;
-	// 		console.log(decoded);
-	// 	});
-	// }
-	// jwt.decode(
-	// 	"eyJhbGciOiJSUzI1NiIsImtpZCI6IjI2MTI5YmE1NDNjNTZlOWZiZDUzZGZkY2I3Nzg5ZjhiZjhmMWExYTEiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI0NjY5ODIzNDQzNS0yY2pua2s5b3FudnNscjhkc2htNzFqY3ZhaGxvZ3FpYS5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsImF1ZCI6IjQ2Njk4MjM0NDM1LTJjam5razlvcW52c2xyOGRzaG03MWpjdmFobG9ncWlhLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTAyOTgzNjA2OTQ0MzA5OTQzMjM2IiwiZW1haWwiOiJjdW5jb25wcm85OEBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiYXRfaGFzaCI6Ikg4VjFidkhtU1RZV2tBVFlIb19KdWciLCJuYW1lIjoiSG_DoG5nIEhvw6AiLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EtL0FPaDE0R2plZnp1M21pUl9rYXZLMjJ3Z255a2FMVkVVRGk3c0xVVWFIblM5PXM5Ni1jIiwiZ2l2ZW5fbmFtZSI6Ikhvw6BuZyIsImZhbWlseV9uYW1lIjoiSG_DoCIsImxvY2FsZSI6InZpIiwiaWF0IjoxNjA5NTYyODUzLCJleHAiOjE2MDk1NjY0NTN9.MPrcnWviG7QI-yxbhd_AxfhO4JgnzcoUfopAfiuQZCdfQx9gMh4CSjB8pXuR5rv_Be7pJHX5vq7PIQ3DBpPmokKiIhFgjujeVe62If36ArnYMxU8Y6oYaE9SXlO0Kij6-sMRi-eCKl4C5gM5a-00ZUwYlu0c-4X_QtoMtFJoLNNeitl3N5vopzM_vV3bhvMwwsWG2TaWmuvqVmJf5g6dRJL1taN_jkEnJLR1ZW_XUKPSpsQXboy_h33sGO35cnivevPT15bernv1QF7aWqi_iwXps2XBo2ncSpq8MSB_4TMOksYnPWgip_e1y-NcCQnYrUGPSQ_Ce0oxrn2zgLCXZA"
-	// ).then(console.log(res));
+module.exports.loggingg = async (req, res) => {
+	console.log(req.body);
 	const token = req.body.token;
 	var decoded = jwt_decode(token);
 	//	console.log(decoded);
@@ -258,7 +290,7 @@ module.exports.logingg = async (req, res) => {
 
 			const accessToken = jwt.sign(payload, process.env.jwtkey, {
 				//set up jwt
-				expiresIn: "1h",
+				expiresIn: "3m",
 			});
 			//console.log(accessToken);
 			return res
@@ -282,7 +314,7 @@ module.exports.logingg = async (req, res) => {
 			const { username, address } = usernew;
 			const accessToken = jwt.sign(payload, process.env.jwtkey, {
 				//set up jwt
-				expiresIn: "1h",
+				expiresIn: "3m",
 			});
 			//console.log(accessToken);
 			return res
