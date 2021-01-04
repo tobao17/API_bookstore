@@ -95,7 +95,7 @@ module.exports.categoryBook = async (req, res) => {
 	}
 };
 module.exports.getBookbycateId = async (req, res) => {
-	console.log(req.params.id);
+	//console.log(req.params.id);
 	try {
 		const book = await Book.find({
 			category: req.params.id,
@@ -131,6 +131,7 @@ module.exports.detail = async (req, res) => {
 	}
 };
 module.exports.postCreate = async (req, res) => {
+	//console.log(req.body);
 	try {
 		if (req.file) {
 			await cloudinary.uploader.upload(req.file.path, (err, result) => {
@@ -178,7 +179,7 @@ module.exports.postUpdate = async (req, res) => {
 		quantity,
 		images,
 	} = req.body;
-	console.log();
+
 	try {
 		await Book.updateOne(
 			{ _id: req.body._id },

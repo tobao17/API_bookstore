@@ -28,7 +28,7 @@ router.get(
 );
 router.post(
 	"/create",
-	// Token.verified,
+	Token.verified,
 	// role.checkRole(role.ROLES.Seller),
 	upload.single("images"),
 	bookController.postCreate
