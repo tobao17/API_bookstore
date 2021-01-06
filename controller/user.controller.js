@@ -99,6 +99,8 @@ module.exports.create = async (req, res) => {
 // 	return;
 // };
 module.exports.edit = async (req, res) => {
+	const userId = req.token.user.id;
+	console.log(userId);
 	const { username, address, phone } = req.body;
 	try {
 		if (req.file) {
@@ -111,9 +113,8 @@ module.exports.edit = async (req, res) => {
 				}
 			});
 		}
-
-		await User.updateOne(
-			{ _id: req.body.id },
+		const userUd = await User.findOneAndUpdate(
+			{ _id: userId },
 			{
 				$set: {
 					phone: phone,
@@ -123,9 +124,11 @@ module.exports.edit = async (req, res) => {
 				},
 			}
 		);
-		return res.status(201).json("update success");
+		// console.log(userud);
+		if (userUd) return res.status(201).json("update success");
+		return res.status(400).json("update Fail");
 	} catch (error) {
-		return res.status(404).json(`update fail! ${error}`);
+		return res.status(404).json(`update Fail! ${error}`);
 	}
 };
 
@@ -176,7 +179,7 @@ module.exports.postLogin = async (req, res) => {
 		);
 		const accessToken = jwt.sign(payload, process.env.jwtkey, {
 			//set up jwt
-			expiresIn: "1m",
+			expiresIn: "1h",
 		});
 
 		return res
@@ -235,7 +238,7 @@ module.exports.logginFB = async (req, res) => {
 
 			const accessToken = jwt.sign(payload, process.env.jwtkey, {
 				//set up jwt
-				expiresIn: "3m",
+				expiresIn: "1h",
 			});
 			//console.log(accessToken);
 			return res
@@ -258,7 +261,7 @@ module.exports.logginFB = async (req, res) => {
 			const { username, address } = usernew;
 			const accessToken = jwt.sign(payload, process.env.jwtkey, {
 				//set up jwt
-				expiresIn: "3m",
+				expiresIn: "1h",
 			});
 			//console.log(accessToken);
 			return res
@@ -290,7 +293,7 @@ module.exports.loggingg = async (req, res) => {
 
 			const accessToken = jwt.sign(payload, process.env.jwtkey, {
 				//set up jwt
-				expiresIn: "3m",
+				expiresIn: "",
 			});
 			//console.log(accessToken);
 			return res
@@ -314,7 +317,7 @@ module.exports.loggingg = async (req, res) => {
 			const { username, address } = usernew;
 			const accessToken = jwt.sign(payload, process.env.jwtkey, {
 				//set up jwt
-				expiresIn: "3m",
+				expiresIn: "1h",
 			});
 			//console.log(accessToken);
 			return res
