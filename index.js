@@ -54,20 +54,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //
 //
 
-app.get("/", async (req, res) => {
-	sendmail.sendMail(null, null);
-	//	const { email } = req.body;
-	// create reusable transporter object using the default SMTP transport
-
-	// Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-
-	// Preview only available when sending through an Ethereal account
-
-	// Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
-
-	res.send("Email Sent!");
-});
-
 app.use("/books", bookRouter);
 app.use("/categori", categoriesRouter);
 app.use("/user", userRouter);
