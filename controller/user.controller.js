@@ -196,7 +196,9 @@ module.exports.forgetPassword = async (req, res) => {
 		const emailUser = await User.findOne({ email: email });
 		console.log(emailUser);
 		if (!emailUser) {
-			return res.status(400).json(`User with that email dont match!`);
+			return res
+				.status(201)
+				.json({ Type: "Fail", msd: `Email Không tồn tại` });
 		}
 		const payload = {
 			user: {
@@ -209,138 +211,27 @@ module.exports.forgetPassword = async (req, res) => {
 			expiresIn: "10m",
 		});
 		sendMail.sendMail(email, Token, 1);
-		return res.status(200).json(`email đã được gửi tới ${email}`);
+		return res
+			.status(200)
+			.json({ Type: "success", msd: `Yêu cầu đã được gửi tới ${email}` });
 	} catch (error) {
 		return res.status(200).json(error);
 	}
 };
 
-module.exports.logginFB = async (req, res) => {
-	const { userID, token } = req.body;
-	const URLres = `https://graph.facebook.com/v9.0/${userID}/?fields=id,name,email&access_token=${token}`;
-	if (!userID || !token) {
-		return res.status(400).json("Lỗi rồi pro ");
-	}
-	try {
-		const facebookRes = await axios.default.get(URLres);
-		const { email, name } = facebookRes.data;
-		const user = await User.findOne({ email });
-		if (user) {
-			const payload = {
-				user: {
-					id: user._id,
-					username: user.username,
-					role: user.role,
-				},
-			};
-			console.log(payload);
-			const { username, address } = user;
-
-			const accessToken = jwt.sign(payload, process.env.jwtkey, {
-				//set up jwt
-				expiresIn: "1h",
-			});
-			//console.log(accessToken);
-			return res
-				.status(202)
-				.json({ username, address, accessToken: accessToken });
-		} else {
-			const usernew = await User.create({
-				email,
-				username: name,
-				password: token,
-			});
-			const payload = {
-				user: {
-					id: usernew._id,
-					username: usernew.username,
-					role: usernew.role,
-				},
-			};
-
-			const { username, address } = usernew;
-			const accessToken = jwt.sign(payload, process.env.jwtkey, {
-				//set up jwt
-				expiresIn: "1h",
-			});
-			//console.log(accessToken);
-			return res
-				.status(202)
-				.json({ username, address, accessToken: accessToken });
-		}
-	} catch (error) {}
-};
-
-module.exports.loggingg = async (req, res) => {
-	console.log(req.body);
-	const token = req.body.token;
-	var decoded = jwt_decode(token);
-	//	console.log(decoded);
-	const { email, name, picture } = decoded;
-	try {
-		const user = await User.findOne({ email });
-		console.log(user);
-		if (user) {
-			const payload = {
-				user: {
-					id: user._id,
-					username: user.username,
-					role: user.role,
-				},
-			};
-			console.log(payload);
-			const { username, address } = user;
-
-			const accessToken = jwt.sign(payload, process.env.jwtkey, {
-				//set up jwt
-				expiresIn: "",
-			});
-			//console.log(accessToken);
-			return res
-				.status(202)
-				.json({ username, address, accessToken: accessToken });
-		} else {
-			const usernew = await User.create({
-				email,
-				username: name,
-				password: token,
-				avatar: picture,
-			});
-			const payload = {
-				user: {
-					id: usernew._id,
-					username: usernew.username,
-					role: usernew.role,
-				},
-			};
-
-			const { username, address } = usernew;
-			const accessToken = jwt.sign(payload, process.env.jwtkey, {
-				//set up jwt
-				expiresIn: "1h",
-			});
-			//console.log(accessToken);
-			return res
-				.status(202)
-				.json({ username, address, accessToken: accessToken });
-		}
-	} catch (error) {}
-
-	return res.status(200).json({
-		msd: "mother fuck",
-	});
-};
-
 ///rest pass
 module.exports.resetPassword = async (req, res) => {
 	const { newPassword, token } = req.body;
+	console.log(token);
 	let id = "";
+	console.log(token);
 
 	if (!newPassword) {
 		return res.status(400).json("faill!");
 	}
 	if (token) {
 		jwt.verify(token, process.env.jwtkey, (err, decoded) => {
+			console.log(err);
 			if (err) return res.status(403).json(`${err}`);
 			id = decoded.user.id;
 		});
@@ -506,4 +397,120 @@ module.exports.deleteBook = async (req, res) => {
 	} catch (error) {
 		return res.status(400).json(`delete fail! ${error}`);
 	}
+};
+module.exports.logginFB = async (req, res) => {
+	const { userID, token } = req.body;
+	const URLres = `https://graph.facebook.com/v9.0/${userID}/?fields=id,name,email&access_token=${token}`;
+	if (!userID || !token) {
+		return res.status(400).json("Lỗi rồi pro ");
+	}
+	try {
+		const facebookRes = await axios.default.get(URLres);
+		const { email, name } = facebookRes.data;
+		const user = await User.findOne({ email });
+		if (user) {
+			const payload = {
+				user: {
+					id: user._id,
+					username: user.username,
+					role: user.role,
+				},
+			};
+			console.log(payload);
+			const { username, address } = user;
+
+			const accessToken = jwt.sign(payload, process.env.jwtkey, {
+				//set up jwt
+				expiresIn: "1h",
+			});
+			//console.log(accessToken);
+			return res
+				.status(202)
+				.json({ username, address, accessToken: accessToken });
+		} else {
+			const usernew = await User.create({
+				email,
+				username: name,
+				password: token,
+			});
+			const payload = {
+				user: {
+					id: usernew._id,
+					username: usernew.username,
+					role: usernew.role,
+				},
+			};
+
+			const { username, address } = usernew;
+			const accessToken = jwt.sign(payload, process.env.jwtkey, {
+				//set up jwt
+				expiresIn: "1h",
+			});
+			//console.log(accessToken);
+			return res
+				.status(202)
+				.json({ username, address, accessToken: accessToken });
+		}
+	} catch (error) {}
+};
+
+module.exports.loggingg = async (req, res) => {
+	const token = req.body.token;
+	var decoded = jwt_decode(token);
+
+	console.log(decoded);
+
+	const { email, name, picture } = decoded;
+	try {
+		const user = await User.findOne({ email });
+		console.log(user);
+		if (user) {
+			const payload = {
+				user: {
+					id: user._id,
+					username: user.username,
+					role: user.role,
+				},
+			};
+			console.log(payload);
+			const { username, address } = user;
+
+			const accessToken = jwt.sign(payload, process.env.jwtkey, {
+				//set up jwt
+				expiresIn: "1h",
+			});
+			//console.log(accessToken);
+			return res
+				.status(202)
+				.json({ username, address, accessToken: accessToken });
+		} else {
+			const usernew = await User.create({
+				email,
+				username: name,
+				password: token,
+				avatar: picture,
+			});
+			const payload = {
+				user: {
+					id: usernew._id,
+					username: usernew.username,
+					role: usernew.role,
+				},
+			};
+
+			const { username, address } = usernew;
+			const accessToken = jwt.sign(payload, process.env.jwtkey, {
+				//set up jwt
+				expiresIn: "1h",
+			});
+			//console.log(accessToken);
+			return res
+				.status(202)
+				.json({ username, address, accessToken: accessToken });
+		}
+	} catch (error) {}
+
+	return res.status(200).json({
+		msd: "LoginThanh cong",
+	});
 };

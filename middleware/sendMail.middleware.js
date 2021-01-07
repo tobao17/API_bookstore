@@ -17,11 +17,11 @@ module.exports.sendMail = async function paginateResult(email, token, option) {
 		msg = {
 			from: process.env.email, // sender address
 			to: email, // list of receivers
-			subject: "Hello ✔", // Subject line
-			text: "Hello world", // plain text body
-			html: `<h1>Hello world </h1> 
+			subject: "ResetPass ✔", // Subject line
+			text: "Thay đổi mật khẩu của bạn ", // plain text body
+			html: `<h1>Thay đổi mật khẩu của bạn </h1> 
 			<br/>
-			<p>Thay đổi mật khẩu tại đây</p>
+			
 			<a href='https://utebook.herokuapp.com/forgotpass/${token}'> tại đây</a>
 			 `, // html body
 		};
