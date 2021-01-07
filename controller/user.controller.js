@@ -224,6 +224,7 @@ module.exports.resetPassword = async (req, res) => {
 	const { newPassword, token } = req.body;
 	console.log(token);
 	let id = "";
+
 	console.log(token);
 
 	if (!newPassword) {
@@ -231,7 +232,6 @@ module.exports.resetPassword = async (req, res) => {
 	}
 	if (token) {
 		jwt.verify(token, process.env.jwtkey, (err, decoded) => {
-			console.log(err);
 			if (err) return res.status(403).json(`${err}`);
 			id = decoded.user.id;
 		});
