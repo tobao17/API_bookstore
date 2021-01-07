@@ -23,17 +23,23 @@ router.get("/getbookcategory/:id", bookController.getBookbycateId);
 router.get("/getbook/:id", bookController.detail);
 router.get(
 	"/getbook",
+	Token.verified,
 	midPaginate.paginateResult(book, "category"),
 	bookController.getBook
 );
 router.post(
 	"/create",
-	// Token.verified,
+	Token.verified,
 	// role.checkRole(role.ROLES.Seller),
 	upload.single("images"),
 	bookController.postCreate
 );
-router.get("/delete/:id", bookController.delete);
-router.post("/update", upload.single("images"), bookController.postUpdate);
+router.get("/delete/:id", Token.verified, bookController.delete);
+router.post(
+	"/update",
+	Token.verified,
+	upload.single("images"),
+	bookController.postUpdate
+);
 router.post("/search", bookController.searchBooks);
 module.exports = router;
