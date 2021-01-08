@@ -23,7 +23,7 @@ router.get("/getbookcategory/:id", bookController.getBookbycateId);
 router.get("/getbook/:id", bookController.detail);
 router.get(
 	"/getbook",
-	Token.verified,
+	//Token.verified,
 	midPaginate.paginateResult(book, "category"),
 	bookController.getBook
 );

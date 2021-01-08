@@ -3,6 +3,8 @@ module.exports.paginateResult = function paginateResult(model, refString) {
 	return async (req, res, next) => {
 		const page = parseInt(req.query.page);
 		const limit = parseInt(req.query.limit);
+		console.log(model.length);
+		console.log(model);
 		const startIndex = (page - 1) * limit;
 		const endIndex = page * limit;
 		const resut = {};
@@ -21,7 +23,7 @@ module.exports.paginateResult = function paginateResult(model, refString) {
 		}
 		try {
 			resut.result = await model
-				.find({ isDelete: false })
+				.find({ isDeleted: false })
 				.populate(refString)
 				.limit(limit)
 				.skip(startIndex);
