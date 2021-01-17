@@ -33,7 +33,8 @@ mongoose.set("useFindAndModify", false);
 //
 //
 
-app.use(cors());.const bookRouter = require("./router/book.router");
+app.use(cors());
+const bookRouter = require("./router/book.router");
 const categoriesRouter = require("./router/categories.router");
 const userRouter = require("./router/user.router");
 const cartRouter = require("./router/cart.router");
