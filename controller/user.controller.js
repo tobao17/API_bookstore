@@ -179,7 +179,7 @@ module.exports.postLogin = async (req, res) => {
 		);
 		const accessToken = jwt.sign(payload, process.env.jwtkey, {
 			//set up jwt
-			expiresIn: "60m",
+			expiresIn: "45m",
 		});
 
 		return res
@@ -422,7 +422,7 @@ module.exports.logginFB = async (req, res) => {
 
 			const accessToken = jwt.sign(payload, process.env.jwtkey, {
 				//set up jwt
-				expiresIn: "60m",
+				expiresIn: "45m",
 			});
 			//console.log(accessToken);
 			return res
@@ -445,7 +445,7 @@ module.exports.logginFB = async (req, res) => {
 			const { username, address } = usernew;
 			const accessToken = jwt.sign(payload, process.env.jwtkey, {
 				//set up jwt
-				expiresIn: "60m",
+				expiresIn: "45m",
 			});
 			//console.log(accessToken);
 			return res
@@ -478,7 +478,7 @@ module.exports.loggingg = async (req, res) => {
 
 			const accessToken = jwt.sign(payload, process.env.jwtkey, {
 				//set up jwt
-				expiresIn: "60m",
+				expiresIn: "45m",
 			});
 			//console.log(accessToken);
 			return res
@@ -502,7 +502,7 @@ module.exports.loggingg = async (req, res) => {
 			const { username, address } = usernew;
 			const accessToken = jwt.sign(payload, process.env.jwtkey, {
 				//set up jwt
-				expiresIn: "60m",
+				expiresIn: "45m",
 			});
 			//console.log(accessToken);
 			return res
