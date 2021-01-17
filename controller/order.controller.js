@@ -49,6 +49,24 @@ module.exports.orderDetail = async (req, res) => {
 			.json({ msg: `get my order fail!`, error: `${error}` });
 	}
 };
+
+module.exports.announce = async (req, res) => {
+	try {
+		const orderAnnounce = await Order.find({ status: 0 }).populate(
+			"user",
+			"-role -wrongLoginCount -status -wallet -password -cart -createdAt -updatedAt -address"
+		);
+
+		return res.status(200).json({
+			msd: "success",
+			data: orderAnnounce,
+		});
+	} catch (error) {
+		return res.status(400).json({
+			msd: "Fail",
+		});
+	}
+};
 module.exports.searchOrder = async (req, res) => {
 	// console.log(req.body.keyword);
 	const searchText = req.body.keyword;

@@ -17,7 +17,11 @@ const role = require("../middleware/role.validate");
 //
 //
 
-router.get("/", bookController.index);
+router.get(
+	"/",
+	//Token.verified,
+	bookController.index
+);
 router.get("/getbookCategory", bookController.categoryBook);
 router.get("/getbookcategory/:id", bookController.getBookbycateId);
 router.get("/getbook/:id", bookController.detail);
@@ -29,7 +33,7 @@ router.get(
 );
 router.post(
 	"/create",
-	Token.verified,
+	//	Token.verified,
 	// role.checkRole(role.ROLES.Seller),
 	upload.single("images"),
 	bookController.postCreate
@@ -37,7 +41,7 @@ router.post(
 router.get("/delete/:id", Token.verified, bookController.delete);
 router.post(
 	"/update",
-	Token.verified,
+	//	Token.verified,
 	upload.single("images"),
 	bookController.postUpdate
 );
