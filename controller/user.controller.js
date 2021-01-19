@@ -18,8 +18,21 @@ cloudinary.config({
 
 module.exports.index = async (req, res) => {
 	try {
-		let users = await User.find();
+		let users = await User.find({ status: 1 });
 		return res.status(200).json(users);
+	} catch (error) {
+		return res.status(404).json(`error ${error}`);
+	}
+};
+module.exports.delete = async (req, res) => {
+	console.log("abc");
+	try {
+		try {
+			await User.updateOne({ _id: req.params.id }, { status: 0 });
+			return res.status(201).json("delete success!");
+		} catch (error) {
+			res.status(400).json("delete fail!");
+		}
 	} catch (error) {
 		return res.status(404).json(`error ${error}`);
 	}

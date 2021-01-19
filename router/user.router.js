@@ -6,6 +6,7 @@ const auth = require("../middleware/verifiedToken.middleware");
 
 const userController = require("../controller/user.controller");
 router.get("/", userController.index);
+router.get("/delete/:id", userController.delete);
 router.post("/create", userController.create);
 router.post("/login", userController.postLogin);
 router.post("/forgetpassword", userController.forgetPassword);
