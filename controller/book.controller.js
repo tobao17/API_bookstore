@@ -14,7 +14,7 @@ module.exports.index = async (req, res) => {
 		const newBook = await Book.find({ isDeleted: false })
 			.populate("category", "-_id -__v ")
 			.sort({ createdAt: -1 })
-			.limit(4);
+			.limit(6);
 		// const bookinorder =
 
 		const hotBook = await Order.aggregate([
@@ -35,7 +35,7 @@ module.exports.index = async (req, res) => {
 				$sort: { sum: -1 },
 			},
 			{
-				$limit: 4,
+				$limit: 6,
 			},
 		]);
 
@@ -112,6 +112,27 @@ module.exports.getBook = async (req, res) => {
 
 module.exports.delete = async (req, res) => {
 	try {
+		//console.log(req.params.id);
+		const bookOrder = await Order.find({ status: 1 }).populate(
+			"books",
+			"-__v "
+		);
+		console.log(bookOrder);
+		var findId = -1;
+		bookOrder.forEach((element) => {
+			element.products.forEach((item) => {
+				console.log(item);
+				if (item.book == req.params.id) {
+					++findId;
+					console.log(item._id + req.params.id);
+				}
+			});
+		});
+
+		if (findId !== -1) {
+			return res.status(201).json({ msg: " sp dang giao hang" });
+		}
+
 		await Book.updateOne({ _id: req.params.id }, { isDeleted: true });
 		return res.status(201).json("delete success!");
 	} catch (error) {
@@ -119,6 +140,7 @@ module.exports.delete = async (req, res) => {
 	}
 };
 module.exports.detail = async (req, res) => {
+	``;
 	console.log(req.params.id);
 	try {
 		const book = await Book.findOne({

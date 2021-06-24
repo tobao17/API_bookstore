@@ -25,7 +25,6 @@ module.exports.index = async (req, res) => {
 	}
 };
 module.exports.delete = async (req, res) => {
-	console.log("abc");
 	try {
 		try {
 			await User.updateOne({ _id: req.params.id }, { status: 0 });
@@ -527,4 +526,30 @@ module.exports.loggingg = async (req, res) => {
 	return res.status(200).json({
 		msd: "LoginThanh cong",
 	});
+};
+const decreaseQuantity = (products) => {
+	let bulkOptions = products.map((item) => {
+		// truyen vao mot mảng pro duct
+		return {
+			updateOne: {
+				filter: { _id: item.book }, // lay ra id
+				update: { $inc: { quantity: -item.quantity } }, // how update??
+			},
+		};
+	});
+
+	Product.bulkWrite(bulkOptions); // goi product truyen bulkWrite
+};
+const IncQuantity = (products) => {
+	let bulkOptions = products.map((item) => {
+		// truyen vao mot mảng pro duct
+		return {
+			updateOne: {
+				filter: { _id: item.book }, // lay ra id
+				update: { $inc: { quantity: +item.quantity } }, // how update??
+			},
+		};
+	});
+
+	Product.bulkWrite(bulkOptions); // goi product truyen bulkWrite
 };

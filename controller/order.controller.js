@@ -20,7 +20,7 @@ module.exports.index = async (req, res) => {
 module.exports.checkorder = async (req, res) => {
 	const userId = req.token.user.id;
 	try {
-		const myOrder = await Order.find({ user: userId, status: !2 })
+		const myOrder = await Order.find({ user: userId })
 			.populate("products.book", "-description -isDelete -quantity")
 			.populate(
 				"user",
@@ -95,16 +95,22 @@ module.exports.searchOrder = async (req, res) => {
 };
 module.exports.add = async (req, res) => {
 	req.body.user = req.token.user.id;
-	console.log(req.body.user);
 
 	try {
-		//	console.log(req.body);
+		await req.body.products.forEach(async (item) => {
+			let book = await Product.findById(item.book);
+			console.log(book.quantity);
+			console.log(item.quantity);
+			if (item.quantity > book.quantity) {
+				return res.status(201).json({ msg: "sản phẩm đã hết hàng!" });
+			}
+		});
 		const order = await Order.create(req.body);
 		const user = await User.findOneAndUpdate(
 			{ _id: req.body.user },
 			{ cart: [] }
 		);
-		console.log(user);
+		// console.log(user);
 		return res.status(201).json({ msg: "add order success!", data: order });
 	} catch (error) {
 		return res.status(400).json({
