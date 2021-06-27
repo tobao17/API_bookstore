@@ -246,3 +246,41 @@ module.exports.searchBooks = async (req, res) => {
 		return res.status(404).json(`search fail ${error}`);
 	}
 };
+module.exports.filter = async (req, res) => {
+	// dung post cho chay do an se sua lai get vs querry sau
+
+	var price = {
+		pricelst: 0,
+		pricerst: 5,
+	};
+
+	try {
+		let bookFromPrice = await Book.find({
+			$and: [
+				{ price: { $lte: price.pricerst } },
+				{ price: { $gte: price.pricelst } },
+			],
+		}).populate("category", "-__v ");
+
+		let bookFromCategory = await handleFilterCategory([
+			"5f789d1d7c17be338c676ef7",
+			"5f789d147c17be338c676ef6",
+		]);
+
+		return res.status(200).json({ data: bookFromPrice });
+		//
+	} catch (error) {
+		return res.status(404).json(`search fail ${error}`);
+	}
+};
+let handleFilterCategory = async (a) => {
+	let ListBookforCategory = [];
+	let b = 0;
+	for (const item of a) {
+		ListBookforCategory += await Book.find({
+			category: item,
+			isDeleted: false,
+		}).populate("category", "-__v ");
+	}
+	return ListBookforCategory;
+};

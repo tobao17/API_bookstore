@@ -470,9 +470,7 @@ module.exports.logginFB = async (req, res) => {
 module.exports.loggingg = async (req, res) => {
 	const token = req.body.token;
 	var decoded = jwt_decode(token);
-
 	console.log(decoded);
-
 	const { email, name, picture } = decoded;
 	try {
 		const user = await User.findOne({ email });
@@ -487,12 +485,10 @@ module.exports.loggingg = async (req, res) => {
 			};
 			console.log(payload);
 			const { username, address } = user;
-
 			const accessToken = jwt.sign(payload, process.env.jwtkey, {
 				//set up jwt
 				expiresIn: "45m",
 			});
-			//console.log(accessToken);
 			return res
 				.status(202)
 				.json({ username, address, accessToken: accessToken });
