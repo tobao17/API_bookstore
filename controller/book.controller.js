@@ -246,14 +246,10 @@ module.exports.searchBooks = async (req, res) => {
 		return res.status(404).json(`search fail ${error}`);
 	}
 };
-module.exports.filter = async (req, res) => {
+module.exports.filterByPrice = async (req, res) => {
 	// dung post cho chay do an se sua lai get vs querry sau
 
-	var price = {
-		pricelst: 0,
-		pricerst: 5,
-	};
-
+	let price = req.body.priceRange;
 	try {
 		let bookFromPrice = await Book.find({
 			$and: [
@@ -269,6 +265,15 @@ module.exports.filter = async (req, res) => {
 
 		return res.status(200).json({ data: bookFromPrice });
 		//
+	} catch (error) {
+		return res.status(404).json(`search fail ${error}`);
+	}
+};
+module.exports.filterByCategory = async (req, res) => {
+	let category = req.body.category;
+	try {
+		let bookFromCategory = await handleFilterCategory([...category]);
+		return res.status(200).json({ data: bookFromCategory });
 	} catch (error) {
 		return res.status(404).json(`search fail ${error}`);
 	}

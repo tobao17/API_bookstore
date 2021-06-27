@@ -46,5 +46,6 @@ router.post(
 	bookController.postUpdate
 );
 router.post("/search", bookController.searchBooks);
-router.get("/filter", bookController.filter);
+router.post("/filterbyprice", bookController.filterByPrice);
+router.post("/filterbycategory", bookController.filterByCategory);
 module.exports = router;
