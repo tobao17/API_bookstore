@@ -466,7 +466,67 @@ module.exports.logginFB = async (req, res) => {
 		}
 	} catch (error) {}
 };
+module.exports.logginFB2 = async (req, res) => {
+	const { userID, token } = req.body;
+	const URLres = `https://graph.facebook.com/v9.0/${userID}/?fields=id,name,email&access_token=${token}`;
+	if (!userID || !token) {
+		return res.status(400).json("Lỗi rồi pro ");
+	}
+	try {
+		const facebookRes = await axios.default.get(URLres);
+		const { email, name } = facebookRes.data;
+		let registerEmail = name;
+		if (email) {
+			registerEmail = email;
+		}
 
+		const userNameExist = await User.findOne({ username: name });
+		if (userNameExist) {
+			const payload = {
+				user: {
+					id: userNameExist._id,
+					username: userNameExist.username,
+					role: userNameExist.role,
+				},
+			};
+			const { username, address } = userNameExist;
+
+			const accessToken = jwt.sign(payload, process.env.jwtkey, {
+				//set up jwt
+				expiresIn: "45m",
+			});
+			//console.log(accessToken);
+			return res
+				.status(202)
+				.json({ username, address, accessToken: accessToken });
+		} else {
+			const usernew = await User.create({
+				email: registerEmail,
+				username: name,
+				password: token,
+			});
+			const payload = {
+				user: {
+					id: usernew._id,
+					username: usernew.username,
+					role: usernew.role,
+				},
+			};
+
+			const { username, address } = usernew;
+			const accessToken = jwt.sign(payload, process.env.jwtkey, {
+				//set up jwt
+				expiresIn: "45m",
+			});
+			//console.log(accessToken);
+			return res
+				.status(202)
+				.json({ username, address, accessToken: accessToken });
+		}
+	} catch (error) {
+		console.log(error);
+	}
+};
 module.exports.loggingg = async (req, res) => {
 	const token = req.body.token;
 	var decoded = jwt_decode(token);

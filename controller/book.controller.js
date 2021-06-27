@@ -248,20 +248,15 @@ module.exports.searchBooks = async (req, res) => {
 };
 module.exports.filterByPrice = async (req, res) => {
 	// dung post cho chay do an se sua lai get vs querry sau
-
+	console.log(req.body);
 	let price = req.body.priceRange;
 	try {
 		let bookFromPrice = await Book.find({
 			$and: [
-				{ price: { $lte: price.pricerst } },
-				{ price: { $gte: price.pricelst } },
+				{ price: { $lte: req.body.pricerst } },
+				{ price: { $gte: req.body.pricelst } },
 			],
 		}).populate("category", "-__v ");
-
-		let bookFromCategory = await handleFilterCategory([
-			"5f789d1d7c17be338c676ef7",
-			"5f789d147c17be338c676ef6",
-		]);
 
 		return res.status(200).json({ data: bookFromPrice });
 		//

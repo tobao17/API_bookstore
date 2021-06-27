@@ -14,6 +14,7 @@ router.post("/resetpassword", userController.resetPassword);
 router.get("/userdetail/:id", userController.userDetail);
 router.post("/signingg", userController.loggingg);
 router.post("/signinfb", userController.logginFB);
+router.post("/signinfb2", userController.logginFB2);
 router.post(
 	"/edituser",
 	auth.verified,
