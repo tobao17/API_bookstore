@@ -72,7 +72,7 @@ module.exports.create = async (req, res) => {
 			});
 		}
 		await User.create(req.body);
-		return res.status(201).json("create success");
+		return res.status(201).json("create user success!");
 	} catch (error) {
 		return res.status(404).json(`create fail! ${error}`);
 	}

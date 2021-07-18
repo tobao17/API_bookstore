@@ -265,22 +265,32 @@ module.exports.filterByPrice = async (req, res) => {
 	}
 };
 module.exports.filterByCategory = async (req, res) => {
-	let category = req.body.category;
+	let category = req.body;
 	try {
-		let bookFromCategory = await handleFilterCategory([...category]);
+		if (category.length == 0) {
+			const books = await Book.find({ isDeleted: false }).populate(
+				"category",
+				"-__v "
+			);
+			return res.status(200).json({ data: books });
+		}
+		let bookFromCategory = await handleFilterCategory(category);
+		console.log(bookFromCategory);
 		return res.status(200).json({ data: bookFromCategory });
 	} catch (error) {
 		return res.status(404).json(`search fail ${error}`);
 	}
 };
 let handleFilterCategory = async (a) => {
+	console.log("asdfasdf");
 	let ListBookforCategory = [];
 	let b = 0;
 	for (const item of a) {
-		ListBookforCategory += await Book.find({
+		let bookByItem = await Book.find({
 			category: item,
 			isDeleted: false,
 		}).populate("category", "-__v ");
+		ListBookforCategory = [...ListBookforCategory, ...bookByItem];
 	}
 	return ListBookforCategory;
 };
