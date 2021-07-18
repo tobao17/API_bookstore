@@ -11,7 +11,10 @@ cloudinary.config({
 
 module.exports.index = async (req, res) => {
 	try {
-		const newBook = await Book.find({ isDeleted: false })
+		const newBook = await Book.find({
+			isDeleted: false,
+			quantity: { $gt: 0 },
+		})
 			.populate("category", "-_id -__v ")
 			.sort({ createdAt: -1 })
 			.limit(6);
@@ -45,10 +48,10 @@ module.exports.index = async (req, res) => {
 		// 					 FROM warehouses
 		// 					 WHERE stock_item = orders.item
 		// 					 AND instock >= orders.ordered );
-		const books = await Book.find({ isDeleted: false }).populate(
-			"category",
-			"-__v "
-		);
+		const books = await Book.find({
+			isDeleted: false,
+			quantity: { $gt: 0 },
+		}).populate("category", "-__v ");
 
 		return res.status(201).json({
 			hotBook,
