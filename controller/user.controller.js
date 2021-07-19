@@ -146,16 +146,27 @@ module.exports.edit = async (req, res) => {
 
 module.exports.postLogin = async (req, res) => {
 	const { username, password } = req.body;
-	const UserExits = await User.findOne({ username });
+	const UserExits = await User.findOne({ username, status: 1 });
 
 	if (!UserExits) {
 		return res.status(202).json({ msg: `Sai tài khoản hoặc mật khẩu !` });
 	}
 	if (UserExits.wrongLoginCount > 4) {
 		// sai nhieu can gui mail kich hoat
-		return res
-			.status(202)
-			.json({ msg: `Bạn đã nhập mật khẩu sai quá nhiều lần` });
+		const payload = {
+			user: {
+				id: UserExits._id,
+			},
+		};
+		console.log(payload);
+		const Token = jwt.sign(payload, process.env.jwtkey, {
+			//set up jwt
+			expiresIn: "10m",
+		});
+		sendMail.sendMail(UserExits.email, Token, 2);
+		return res.status(202).json({
+			msg: `Bạn đã nhập mật khẩu sai quá nhiều lần!Vui lòng kiểm tra Email`,
+		});
 	}
 	//console.log(UserExits);
 	if (!bcryptjs.compareSync(password, UserExits.password)) {
@@ -251,7 +262,11 @@ module.exports.resetPassword = async (req, res) => {
 	}
 	try {
 		let hash = bcryptjs.hashSync(newPassword);
-		await User.findOneAndUpdate({ _id: id }, { password: hash });
+		await User.findOneAndUpdate(
+			{ _id: id },
+			{ password: hash },
+			{ wrongLoginCount: 0 }
+		);
 		return res.status(200).json({ msg: "ban da doi mat khau thanh cong!" });
 	} catch (error) {
 		return res.status(400).json(error);

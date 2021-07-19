@@ -26,6 +26,19 @@ module.exports.sendMail = async function paginateResult(email, token, option) {
 			 `, // html body
 		};
 	}
+	if (option === 2) {
+		msg = {
+			from: process.env.email, // sender address
+			to: email, // list of receivers
+			subject: "Bạn đã nhập sai mật khẩu quá nhiều lần!", // Subject line
+			text: "Thay đổi mật khẩu của bạn ", // plain text body
+			html: `<h1>Thay đổi mật khẩu của bạn tại đây </h1> 
+			<br/>
+			
+			<a href='https://utebook.herokuapp.com/forgotpass/${token}'> tại đây</a>
+			 `, // html body
+		};
+	}
 
 	try {
 		await transporter.sendMail(msg, (err, info) => {
