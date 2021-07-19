@@ -180,11 +180,7 @@ module.exports.postLogin = async (req, res) => {
 		);
 		return res.status(202).json({ msg: `Sai tài khoản hoặc mật khẩu!` });
 	}
-	if (UserExits.role !== 0) {
-		return res
-			.status(202)
-			.json({ msg: `Lỗi truy cập! bạn đang ở quyền user` });
-	}
+
 	if (bcryptjs.compareSync(password, UserExits.password)) {
 		const payload = {
 			user: {
@@ -218,9 +214,6 @@ module.exports.AdminpostLogin = async (req, res) => {
 	if (!UserExits) {
 		return res.status(202).json({ msg: `Sai tài khoản hoặc mật khẩu !` });
 	}
-	if (UserExits.role == 0) {
-		return res.status(202).json({ msg: `Bạn không có quyền đăng nhập !` });
-	}
 
 	if (UserExits.wrongLoginCount > 4) {
 		// sai nhieu can gui mail kich hoat
@@ -239,6 +232,7 @@ module.exports.AdminpostLogin = async (req, res) => {
 			msg: `Bạn đã nhập mật khẩu sai quá nhiều lần!Vui lòng kiểm tra Email`,
 		});
 	}
+
 	//console.log(UserExits);
 	if (!bcryptjs.compareSync(password, UserExits.password)) {
 		await User.updateOne(
@@ -251,10 +245,8 @@ module.exports.AdminpostLogin = async (req, res) => {
 		);
 		return res.status(202).json({ msg: `Sai tài khoản hoặc mật khẩu!` });
 	}
-	if (UserExits.role !== 0) {
-		return res
-			.status(202)
-			.json({ msg: `Lỗi truy cập! bạn đang ở quyền user` });
+	if (UserExits.role == 0) {
+		return res.status(202).json({ msg: `Bạn không có quyền đăng nhập !` });
 	}
 	if (bcryptjs.compareSync(password, UserExits.password)) {
 		const payload = {
@@ -333,8 +325,7 @@ module.exports.resetPassword = async (req, res) => {
 		let hash = bcryptjs.hashSync(newPassword);
 		await User.findOneAndUpdate(
 			{ _id: id },
-			{ password: hash },
-			{ wrongLoginCount: 0 }
+			{ password: hash, wrongLoginCount: 0 }
 		);
 		return res.status(200).json({ msg: "ban da doi mat khau thanh cong!" });
 	} catch (error) {
