@@ -9,6 +9,7 @@ router.get("/", userController.index);
 router.get("/delete/:id", userController.delete);
 router.post("/create", userController.create);
 router.post("/login", userController.postLogin);
+router.post("/adminlogin", userController.AdminpostLogin);
 router.post("/forgetpassword", userController.forgetPassword);
 router.post("/resetpassword", userController.resetPassword);
 router.get("/userdetail/:id", userController.userDetail);
