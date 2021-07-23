@@ -211,6 +211,7 @@ module.exports.postLogin = async (req, res) => {
 module.exports.AdminpostLogin = async (req, res) => {
 	const { username, password } = req.body;
 	const UserExits = await User.findOne({ username, status: 1 });
+	console.log(UserExits);
 	if (!UserExits) {
 		return res.status(202).json({ msg: `Sai tài khoản hoặc mật khẩu !` });
 	}

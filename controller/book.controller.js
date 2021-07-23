@@ -120,14 +120,12 @@ module.exports.delete = async (req, res) => {
 			"books",
 			"-__v "
 		);
-		console.log(bookOrder);
+
 		var findId = -1;
 		bookOrder.forEach((element) => {
 			element.products.forEach((item) => {
-				console.log(item);
 				if (item.book == req.params.id) {
 					++findId;
-					console.log(item._id + req.params.id);
 				}
 			});
 		});
@@ -144,7 +142,7 @@ module.exports.delete = async (req, res) => {
 };
 module.exports.detail = async (req, res) => {
 	``;
-	console.log(req.params.id);
+
 	try {
 		const book = await Book.findOne({
 			_id: req.params.id,
@@ -278,14 +276,13 @@ module.exports.filterByCategory = async (req, res) => {
 			return res.status(200).json({ data: books });
 		}
 		let bookFromCategory = await handleFilterCategory(category);
-		console.log(bookFromCategory);
+
 		return res.status(200).json({ data: bookFromCategory });
 	} catch (error) {
 		return res.status(404).json(`search fail ${error}`);
 	}
 };
 let handleFilterCategory = async (a) => {
-	console.log("asdfasdf");
 	let ListBookforCategory = [];
 	let b = 0;
 	for (const item of a) {

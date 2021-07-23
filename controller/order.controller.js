@@ -17,7 +17,7 @@ module.exports.index = async (req, res) => {
 		res.status(400).json(error);
 	}
 };
-module.exports.checkorder = async (req, res) => {
+module.exports.checkOrder = async (req, res) => {
 	const userId = req.token.user.id;
 	try {
 		const myOrder = await Order.find({ user: userId })
@@ -26,6 +26,7 @@ module.exports.checkorder = async (req, res) => {
 				"user",
 				"-role -wrongLoginCount -status -wallet -password -cart -createdAt -updatedAt -address"
 			);
+		sort({ _id: -1 });
 		return res.status(200).json({ msg: ` success!`, data: myOrder });
 	} catch (error) {
 		return res
