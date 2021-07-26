@@ -51,6 +51,24 @@ module.exports.orderDetail = async (req, res) => {
 			.json({ msg: `get my order fail!`, error: `${error}` });
 	}
 };
+module.exports.cancelOrder = async (req, res) => {
+	const OrderId = req.params.id;
+	try {
+		await Order.findOneAndUpdate(
+			{ _id: OrderId },
+			{
+				$set: {
+					status: 3,
+				},
+			}
+		);
+		return res.status(200).json({ msg: ` success!` });
+	} catch (error) {
+		return res
+			.status(400)
+			.json({ msg: `get my order fail!`, error: `${error}` });
+	}
+};
 
 module.exports.announce = async (req, res) => {
 	try {
@@ -114,6 +132,52 @@ module.exports.add = async (req, res) => {
 		);
 		// console.log(user);
 		return res.status(201).json({ msg: "add order success!", data: order });
+	} catch (error) {
+		return res.status(400).json({
+			msd: `your request could not be processed! +${error}`,
+		});
+	}
+};
+module.exports.statistical = async (req, res) => {
+	try {
+		const totalOrder = await (await Order.find({})).length;
+		const totalCustomer = await (await User.find({ status: 1 })).length;
+
+		const totalProduct = await (
+			await Product.find({ isDeleted: false })
+		).length;
+		const totalOrderBuget = await Order.aggregate([
+			{ $match: { status: 2 } },
+			{
+				$group: {
+					_id: { $year: "$createdAt" },
+					totalAmount: { $sum: "$totalrice" },
+				},
+			},
+		]);
+		const totalOrderBugetByDate = await Order.aggregate([
+			{ $match: { status: 2 } },
+			{
+				$group: {
+					_id: {
+						day: { $dayOfMonth: "$createdAt" },
+						month: { $month: "$createdAt" },
+					},
+					totalAmount: { $sum: "$totalrice" },
+				},
+			},
+		]);
+
+		return res.status(201).json({
+			msg: "Get statistical success!",
+			data: {
+				totalOrder,
+				totalCustomer,
+				totalProduct,
+				totalOrderBuget,
+				totalOrderBugetByDate,
+			},
+		});
 	} catch (error) {
 		return res.status(400).json({
 			msd: `your request could not be processed! +${error}`,
