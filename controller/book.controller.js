@@ -51,11 +51,29 @@ module.exports.index = async (req, res) => {
 		const books = await Book.find({
 			isDeleted: false,
 			quantity: { $gt: 0 },
-		}).populate("category", "-__v ");
+		})
+			.sort({ _id: -1 })
+			.populate("category", "-__v ");
 
 		return res.status(201).json({
 			hotBook,
 			newBook,
+			books,
+		});
+	} catch (error) {
+		return res.status(404).json(`fail ${error}`);
+	}
+};
+module.exports.getListBook = async (req, res) => {
+	try {
+		const books = await Book.find({
+			isDeleted: false,
+			quantity: { $gt: 0 },
+		})
+			.sort({ _id: -1 })
+			.populate("category", "-__v ");
+
+		return res.status(201).json({
 			books,
 		});
 	} catch (error) {

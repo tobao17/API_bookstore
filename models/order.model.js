@@ -28,6 +28,10 @@ const OrderSchema = new Schema(
 			default: 0, //0 chua xu ly ,1 dang giao hang ,2 dang giao hang , 3 huy don hang,
 		},
 		totalrice: Number,
+		Traffic: {
+			type: Number,
+			default: 0, // 0:by phone 1: by web
+		},
 	},
 	{ timestamps: true }
 );

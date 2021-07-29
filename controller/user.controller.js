@@ -78,38 +78,6 @@ module.exports.create = async (req, res) => {
 	}
 };
 
-// module.exports.editUser = async (req, res) => {
-// 	const { username, address, id } = req.body;
-// 	console.log(req.body);
-
-// try {
-// 	if (req.file) {
-// 		await cloudinary.uploader.upload(req.file.path, (err, result) => {
-// 			if (result) {
-// 				req.body.avatar = result.url;
-// 			}
-// 			if (err) {
-// 				return res.status(403).json("create image fail ");
-// 			}
-// 		});
-// 	}
-
-// 	await User.updateOne(
-// 		{ _id: req.body._id },
-// 		{
-// 			$set: {
-// 				username,
-// 				address,
-// 				avatar: req.body.avatar,
-// 			},
-// 		}
-// 	);
-// 	return res.status(201).json("update success");
-// } catch (error) {
-// 	return res.status(404).json(`update fail! ${error}`);
-// }
-// 	return;
-// };
 module.exports.edit = async (req, res) => {
 	const userId = req.token.user.id;
 	console.log(userId);
@@ -659,6 +627,7 @@ module.exports.loggingg = async (req, res) => {
 		msd: "LoginThanh cong",
 	});
 };
+
 const decreaseQuantity = (products) => {
 	let bulkOptions = products.map((item) => {
 		// truyen vao mot mảng pro duct

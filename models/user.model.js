@@ -18,10 +18,10 @@ var userSchema = new mongoose.Schema(
 		address: String,
 		role: { type: Number, default: 0 },
 		avatar: String,
-
 		wrongLoginCount: { type: Number, default: 0 },
 		status: { type: Number, default: 1 },
 		wallet: { type: Number, default: 0 },
+		Wishlist: { type: Array },
 		cart: [CartItemSchema],
 	},
 	{ timestamps: true }

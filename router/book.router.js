@@ -17,11 +17,8 @@ const role = require("../middleware/role.validate");
 //
 //
 
-router.get(
-	"/",
-	//Token.verified,
-	bookController.index
-);
+router.get("/", bookController.index);
+router.get("/getlistbook", bookController.getListBook);
 router.get("/getbookCategory", bookController.categoryBook);
 router.get("/getbookcategory/:id", bookController.getBookbycateId);
 router.get("/getbook/:id", bookController.detail);

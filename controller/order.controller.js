@@ -11,12 +11,14 @@ module.exports.index = async (req, res) => {
 				"user",
 				"-role -wrongLoginCount -status -wallet -password -cart -createdAt -updatedAt -address"
 			)
+			.sort({ _id: -1 })
 			.sort({ status: 1 });
 		res.status(200).json({ msg: "success!", data: orderlist });
 	} catch (error) {
 		res.status(400).json(error);
 	}
 };
+
 module.exports.checkOrder = async (req, res) => {
 	const userId = req.token.user.id;
 	try {
@@ -35,6 +37,7 @@ module.exports.checkOrder = async (req, res) => {
 			.json({ msg: `get my order fail!`, error: `${error}` });
 	}
 };
+
 module.exports.orderDetail = async (req, res) => {
 	const OrderId = req.params.id;
 	try {
@@ -51,6 +54,7 @@ module.exports.orderDetail = async (req, res) => {
 			.json({ msg: `get my order fail!`, error: `${error}` });
 	}
 };
+
 module.exports.cancelOrder = async (req, res) => {
 	const OrderId = req.params.id;
 	try {
@@ -87,9 +91,9 @@ module.exports.announce = async (req, res) => {
 		});
 	}
 };
+
 module.exports.searchOrder = async (req, res) => {
-	// console.log(req.body.keyword);
-	const searchText = req.body.keyword;
+	const searchText = req.body.keyword.toUpperCase();
 	console.log(searchText);
 	try {
 		const order = await Order.find({})
@@ -98,12 +102,13 @@ module.exports.searchOrder = async (req, res) => {
 				"user",
 				"-role -wrongLoginCount -status -wallet -password -cart -createdAt -updatedAt -address"
 			); //chua toi uu
-		const orderSearch = order.filter((item) => {
-			if (item.address.includes(searchText)) return item;
-			if (item.user.username.includes(searchText)) return item;
-			if (item._id.toString().slice(20).includes(searchText)) return item;
+		const orderSearch = await order.filter((item) => {
+			if (item.address.toUpperCase().includes(searchText)) return item;
+			if (item.user.username.toUpperCase().includes(searchText)) return item;
+			if (item._id.toString().toUpperCase().slice(20).includes(searchText))
+				return item;
 		}); // chua toi uu --> lam truoc chay do an--> quay lai sau
-
+		console.log(orderSearch);
 		return res.status(200).json({
 			msd: "success",
 			data: orderSearch,
@@ -138,9 +143,36 @@ module.exports.add = async (req, res) => {
 		});
 	}
 };
+module.exports.addByWeb = async (req, res) => {
+	req.body.user = req.token.user.id;
+	req.body.Traffic = 1;
+	console.log(req.body);
+	try {
+		await req.body.products.forEach(async (item) => {
+			let book = await Product.findById(item.book);
+			console.log(book.quantity);
+			console.log(item.quantity);
+			if (item.quantity > book.quantity) {
+				return res.status(201).json({ msg: "sản phẩm đã hết hàng!" });
+			}
+		});
+		const order = await Order.create(req.body);
+		const user = await User.findOneAndUpdate(
+			{ _id: req.body.user },
+			{ cart: [] }
+		);
+		// console.log(user);
+		return res.status(201).json({ msg: "add order success!", data: order });
+	} catch (error) {
+		return res.status(400).json({
+			msd: `your request could not be processed! +${error}`,
+		});
+	}
+};
 module.exports.statistical = async (req, res) => {
 	try {
 		const totalOrder = await (await Order.find({})).length;
+		const totalOrderByWeb = await (await Order.find({ Traffic: 1 })).length;
 		const totalCustomer = await (await User.find({ status: 1 })).length;
 
 		const totalProduct = await (
@@ -162,6 +194,7 @@ module.exports.statistical = async (req, res) => {
 					_id: {
 						day: { $dayOfMonth: "$createdAt" },
 						month: { $month: "$createdAt" },
+						dateTime: { $dayOfYear: "$createdAt" },
 					},
 					totalAmount: { $sum: "$totalrice" },
 				},
@@ -176,6 +209,7 @@ module.exports.statistical = async (req, res) => {
 				totalProduct,
 				totalOrderBuget,
 				totalOrderBugetByDate,
+				totalOrderByWeb,
 			},
 		});
 	} catch (error) {

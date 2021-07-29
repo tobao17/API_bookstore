@@ -4,13 +4,6 @@ const Bill = require("../models/bill.model");
 
 module.exports.index = async (req, res) => {
 	try {
-		// let bill = await Bill.find().populate({
-		// 	path: "Order",
-		// 	populate: {
-		// 		path: "user",
-		// 	},
-		// });
-
 		// qua nhieu du lieu thua
 		const bill = await Bill.find().populate("Order");
 
@@ -22,6 +15,28 @@ module.exports.index = async (req, res) => {
 		return res.status(404).json(`error ${error}`);
 	}
 };
+// module.exports.searchBill = async (req, res) => {
+// 	const searchText = req.body.keyword.toUpperCase();
+
+// 	try {
+// 		const bills = await Bill.find().populate("Order");
+// 		// const orderSearch = await bills.filter((item) => {
+// 		// 	if (item.address.toUpperCase().includes(searchText)) return item;
+// 		// 	if (item.user.username.toUpperCase().includes(searchText)) return item;
+// 		// 	if (item._id.toString().toUpperCase().slice(20).includes(searchText))
+// 		// 		return item;
+// 		// }); // chua toi uu --> lam truoc chay do an--> quay lai sau
+// 		console.log(orderSearch);
+// 		return res.status(200).json({
+// 			msd: "success",
+// 			data: orderSearch,
+// 		});
+// 		//
+// 	} catch (error) {
+// 		return res.status(404).json(`search fail ${error}`);
+// 	}
+// };
+
 module.exports.delete = async (req, res) => {
 	const BillId = req.params.billId;
 
